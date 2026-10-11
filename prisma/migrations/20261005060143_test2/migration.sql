@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Activity" ALTER COLUMN "mref" DROP NOT NULL,
+ALTER COLUMN "takenBy" DROP NOT NULL;

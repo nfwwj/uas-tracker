@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+  previewFeatures = ["strictUndefinedChecks"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Permit {
+  id             Int        @id @default(autoincrement())
+  permitNo       String     @unique       
+  applicationNum String                    
+  altitudeFt     Int
+  class          Int
+  fullText        String                    
+  activities     Activity[]
+}
+
+model Activity {
+  id                Int         @id @default(autoincrement())
+  permitId          Int
+  permit            Permit      @relation(fields: [permitId], references: [id], onDelete: Cascade) //onDelete cascade refers to which field?
+  activityDate String      // "30 May 2026" 
+  // activityEndDate   String      // 
+  activityTime      String     
+  activityDateTime DateTime
+  status            String @default("N")
+  mref              String?    // set when NOTAM taken
+  createdAt         DateTime    @default(now())
+  takenBy           String?    // set when NOTAM taken
+
+  @@unique([permitId, activityDate, activityTime])
+  @@index([status, activityDateTime])
+}
