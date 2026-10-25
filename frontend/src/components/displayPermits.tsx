@@ -12,7 +12,7 @@ import {
 
 import PermitCard from './permitCard'
 
-function DisplayPermits({ refreshKey, onSelect }: { refreshKey: number, onSelect: (permit: Permit) => void }){
+function DisplayPermits({ onSelect, selectedId }: {onSelect: (permit: Permit) => void, selectedId: number | null}){
 
   const { data: permits = [], error, isPending } = useQuery({
     queryKey: ["permits"],
@@ -21,15 +21,18 @@ function DisplayPermits({ refreshKey, onSelect }: { refreshKey: number, onSelect
 
   if (isPending) return <p>Loading permits...</p>
   if (error) return <p>({String(error)})</p>
-  if (permits.length == 0) return <p>No permits to show.</p>
+  if (permits.length == 0) return <p>No permits to show. Be the first to add one!</p>
 
   console.log("permits: ",permits)
 
   return(
    <>
+
+   <p className="text-2xl font-bold">Permits</p>
       {permits.map((permit)=>(
-        <PermitCard key={`${permit.id}`} permit={permit} onSelect={onSelect}/>
+        <PermitCard key={`${permit.id}`} permit={permit} onSelect={onSelect} selected={permit.id === selectedId}/>
       ))}
+   
   </>
   )
 }

@@ -7,8 +7,8 @@ export async function getActivitiesByPermitId(permitId: number) {
 }
 
 export async function findMrefsByPermitId(permitId: number) {
-    const response = await server.get<{ mref: string }[]>(`/activities/mrefs/${permitId}`)
-    return response.data.map((row) => row.mref)
+    const response = await server.get<{ mref: string, takenBy: string }[]>(`/activities/mrefs/${permitId}`)
+    return response.data
 }
 
 export async function takeNotam(data: takeNotam) {

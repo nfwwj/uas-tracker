@@ -6,131 +6,76 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  color: #222;
-  background: #fafafa;
-}
-
-/* two columns side by side, each scrolls on its own */
+/* app.tsx */
 .main-layout {
   display: flex;
-  gap: 16px;
-  height: 100vh;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin: 2rem;
+  min-height: 100vh;    
   padding: 16px;
-  box-sizing: border-box;
+  
+
 }
 
+/* app.tsx */
 .permit-column {
-  flex: 0 0 340px; /* fixed-width left column */
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem; 
+  align-self: flex-start;
+  top: 1rem;
+  position: sticky;
 }
 
-.activity-column {
-  flex: 1; /* takes the rest */
-  overflow-y: auto;
+/* app.tsx */
+.activity-column{
+  flex: 0 0 18rem;      /* no grow, no shrink, always 24rem */
+  min-width: 0;
+  display: flex;        /* gap does nothing without flex/grid */
+  flex-direction: column;
+  gap: 0.5rem;
+  align-self: flex-start;
+  top: 1rem;
+  position: sticky;
 }
 
-.permit-card {
-  width: 100%;
-  text-align: left;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 12px;
-}
-
-.permit-card:hover {
-  border-color: #666;
-}
-
-.permit-card h2 {
-  margin: 0 0 4px;
-  font-size: 1rem;
-}
-
-.permit-card p {
-  margin: 2px 0;
-}
-
-textarea,
-input {
-  font: inherit;
-  padding: 6px;
-  box-sizing: border-box;
-}
-
-textarea {
-  width: 100%;
-}
-
-button {
-  font: inherit;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-.error {
-  color: #b00020;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 8px 0;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 6px;
-  border-bottom: 1px solid #ddd;
-}
-
-.mrefs {
-  list-style: none;
-  padding: 0;
+/* activityTable.tsx */
+.notam-column {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
+  align-self: flex-start;
+  top: 1rem;
+  position: sticky;
 }
 
-.mrefs li {
+/* app.tsx */
+.activity-table{
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: flex-start;
+  flex: 0 0 18rem;
+  min-width: 0;         /* else it grows to fit long rows, so width changes per permit */
 }
 
-dialog {
-  width: min(800px, calc(100% - 32px));
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-dialog header {
+/* activityTable.tsx */
+.notam-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1rem;                
 }
+
+/* activityTable.tsx */
+.notam-check {
+ display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
+
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -253,5 +198,6 @@ dialog header {
   }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable; /* reserve scrollbar space: page doesn't shift when it appears */
   }
 }
