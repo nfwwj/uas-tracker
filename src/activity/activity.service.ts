@@ -26,7 +26,7 @@ export class ActivityService {
     const permit = await this.prismaService.activity.findMany({
       where: {permitId : permitId, mref: { not: null } },
       distinct: ['mref'],
-      select: { mref: true }
+      select: { mref: true, takenBy: true }
     });
     return permit
   }
