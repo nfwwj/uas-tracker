@@ -11,7 +11,7 @@ import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react"
 import { useState } from 'react'
 
 function PermitCard({ permit, onSelect, selected }: { permit: Permit, onSelect: (permit: Permit) => void , selected: boolean | null}){
-  const nextActivity = new Date(permit.activities[0].activityDateTime).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
+  const nextActivity = new Date(permit.activities[0].activityDateTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Singapore' })
 
   return(
     <Item
@@ -28,7 +28,7 @@ function PermitCard({ permit, onSelect, selected }: { permit: Permit, onSelect: 
       
     >
       <ItemContent>
-        <ItemTitle>{permit.permitNo}</ItemTitle>
+        <ItemTitle>{permit.applicationNum}</ItemTitle>
         <ItemDescription>      
           Next activity: {nextActivity}
         </ItemDescription>

@@ -1,11 +1,12 @@
-// one activity as returned by the parser / sent in POST /permits
+// Each object (dict) in response from POST /permits/parse (what py server returns) and POST /permits body
 export interface NewActivity {
-  activityDate: string // "30 May 2026 to 31 May 2026"
-  activityTime: string // "0000LT to 2359LT"
+  activityDate: string 
+  activityTime: string 
   activityDateTime: string // ISO with +08:00, sort key
 }
 
-// GET /activities/id/:id
+// GET /activities/id/:id response
+// used in activity API getActivitiesByPermitId
 export interface Activity extends NewActivity {
   id: number
   permitId: number

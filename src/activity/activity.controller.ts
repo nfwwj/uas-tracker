@@ -3,6 +3,8 @@ import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Patch, Qu
 import { ActivityService } from './activity.service';
 import { CancelNotamDTO, TakeNotamDTO } from './dto/activity.dto';
 
+import { setTimeout as sleep } from 'node:timers/promises';
+
 @Controller('activities')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
@@ -11,6 +13,7 @@ export class ActivityController {
   // async getActivitiesByPermitNo(@Query('permitNo') permitNo: string) {
   //   return this.activityService.getActivitiesByPermitNo(permitNo);
   // }
+  
 
   @Get('id/:id')
   async getActivitiesByPermitId(@Param('id', ParseIntPipe) id: number) {
@@ -24,11 +27,13 @@ export class ActivityController {
 
   @Patch('takenotam') // PATCH /api/activities/notam
   async takeNotam(@Body() data: TakeNotamDTO) {
+    await sleep(1500);
     return this.activityService.takeNotam(data);
   }
 
   @Patch('cancelnotam') // PATCH /api/activities/notam/cancel, mref in body (NOTAM refs contain "/")
   async deleteNotam(@Body() data: CancelNotamDTO) {
+    await sleep(1500);
     return this.activityService.deleteNotam(data);
   }
 

@@ -20,7 +20,8 @@ model Permit {
   applicationNum String                    
   altitudeFt     Int
   class          Int
-  fullText        String                    
+  fullText        String?
+  coordinates     String?                  
   activities     Activity[]
 }
 
@@ -28,15 +29,15 @@ model Activity {
   id                Int         @id @default(autoincrement())
   permitId          Int
   permit            Permit      @relation(fields: [permitId], references: [id], onDelete: Cascade) //onDelete cascade refers to which field?
-  activityDate String      // "30 May 2026" 
-  // activityEndDate   String      // 
+  activityDate String            // "30 May 2026" 
+
   activityTime      String     
   activityDateTime DateTime
-  status            String @default("N")
+  status            String      @default("N")
   mref              String?    // set when NOTAM taken
   createdAt         DateTime    @default(now())
   takenBy           String?    // set when NOTAM taken
 
   @@unique([permitId, activityDate, activityTime])
-  @@index([status, activityDateTime])
+  @@index([status, activityDateTime]) // index for what? and why?
 }

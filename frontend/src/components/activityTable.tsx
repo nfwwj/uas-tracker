@@ -70,8 +70,8 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
     <>
     {/* wrapper keeps the title above the table; .activity-table lays its children out in a row */}
     <div className="flex flex-col gap-2">
-    <p className="text-2xl font-bold">Activities</p>
-    <Table>
+    <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "150ms" }}>Activities</p>
+    <Table className="animate-enter" style={{ animationDelay: "150ms" }}>
       <TableHeader>
         <TableRow className="cursor-default select-none hover:bg-black">
           <TableHead className="w-10 text-xl text-left"></TableHead>
@@ -114,13 +114,13 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
       </TableBody>
     </Table>
     </div>
-    {activitiesQuery.data.length > 0 && (<NotamInput selected={selectedIds} permitId={permitId} onTaken={() =>setSelectedIds([])}></NotamInput>)}
+    {activitiesQuery.data.length > 0 && (<NotamInput selected={selectedIds} permitId={permitId} onTaken={() =>setSelectedIds([])} dataLength={activitiesQuery.data.length}></NotamInput>)}
     
     </>
   )
 }
 
-export function NotamInput({selected, permitId, onTaken}: {selected: number[], permitId: number, onTaken: () => void}){
+export function NotamInput({selected, permitId, onTaken, dataLength}: {selected: number[], permitId: number, onTaken: () => void, dataLength: number}){
   const queryClient = useQueryClient()
   const mrefRef = useRef<HTMLInputElement>(null)
   const takenByRef = useRef<HTMLInputElement>(null)
@@ -150,7 +150,7 @@ export function NotamInput({selected, permitId, onTaken}: {selected: number[], p
     },
     onError: (error) => toast.add({
       title: "Something went wrong",
-      description: `${error}`,
+      description: `Error ${error.response?.data.statusCode ?? "XXX"} (${error.response?.statusText ?? "Server error"}): ${error.response?.data.message ?? "Something went wrong."} `,
       type: "warning"
     })
   })
@@ -182,8 +182,8 @@ export function NotamInput({selected, permitId, onTaken}: {selected: number[], p
   return(
     // sticky on the wrapper, not inside the Card: it slides within .activity-table (as tall as the table)
     <div className="notam-column">
-     <p className="text-2xl font-bold">Take NOTAM</p>
-     <Card>
+     <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "225ms" }}>Take NOTAM</p>
+     <Card className="animate-enter" style={{ animationDelay: "225ms" }}>
          <CardContent className="notam-form">
              <Field>
                 <FieldLabel htmlFor="mref">NOTAM Mref<span className="text-destructive">*</span></FieldLabel>
@@ -205,7 +205,9 @@ export function NotamInput({selected, permitId, onTaken}: {selected: number[], p
               <Label htmlFor="check2">No more than 3 DLY BTN, or more than the maximum number of activity records allowed, are being taken.</Label>
             </Field>
              </div>
-             
+          
+            <p className='text-sm text-muted-foreground'>Selected {selected.length} of {dataLength ?? "?"} record(s)</p>
+
            <Button type="button" onClick={handleSubmit} disabled={mutation.isPending} className="notam-submit">
               {mutation.isPending && <Spinner />}
               Submit

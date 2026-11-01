@@ -4,6 +4,8 @@ import { CreatePermitDTO } from './dto/permit-dto';
 import { ParsePermitDTO } from './dto/permit-dto';
 import { PermitService } from './permit.service';
 
+import { setTimeout as sleep } from 'node:timers/promises';
+
 @Controller('permits')
 export class PermitController {
   constructor(private readonly permitService: PermitService) {}
@@ -18,6 +20,11 @@ export class PermitController {
     return this.permitService.getPendingPermits()
   }
 
+  @Get("count")
+  async getTotalNumPermits(){
+    return this.permitService.getTotalNumPermits()
+  }
+
   @Get('id/:id') 
   async findPermitById(@Param('id', ParseIntPipe) id: number) {
     return this.permitService.findPermitById(id);
@@ -30,6 +37,7 @@ export class PermitController {
 
   @Post()
   async addPermitandActivities(@Body() data: CreatePermitDTO) {
+    await sleep(1500);
     return this.permitService.addPermitandActivities(data);
   }
 
