@@ -4,7 +4,11 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-@custom-variant dark (&:is(.dark *));
+
+/* shared enter animation; stagger with style={{ animationDelay }} (fill-mode-both hides it until then) */
+@utility animate-enter {
+  @apply animate-in fade-in-2 slide-in-from-left-2 fill-mode-both duration-600;
+}
 
 /* app.tsx */
 .main-layout {
@@ -24,7 +28,7 @@
   flex-direction: column;
   gap: 0.5rem; 
   align-self: flex-start;
-  top: 1rem;
+  top: 4.5rem;          /* below the sticky header (~3.5rem) + 1rem gap */
   position: sticky;
 }
 
@@ -36,7 +40,7 @@
   flex-direction: column;
   gap: 0.5rem;
   align-self: flex-start;
-  top: 1rem;
+  top: 4.5rem;          /* below the sticky header (~3.5rem) + 1rem gap */
   position: sticky;
 }
 
@@ -46,7 +50,7 @@
   flex-direction: column;
   gap: 0.5rem;
   align-self: flex-start;
-  top: 1rem;
+  top: 4.5rem;          /* below the sticky header (~3.5rem) + 1rem gap */
   position: sticky;
 }
 

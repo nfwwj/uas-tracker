@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import DisplayPermits from './components/displayPermits'
+import DisplayPermits from './components/DisplayPermits'
 import ActivityCard from './components/activityCard'
 
 import { type Permit } from './types/permit'
@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 
 import { ThemeProvider } from "@/components/theme-provider"
-
+import { AddPermitDialog } from './components/addPermit'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -19,16 +19,19 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 
+import { PlusIcon } from 'lucide-react'
+
 export default function App() {
   const [selectedPermit, setSelectedPermit] = useState<Permit | null>(null)
 
   return(
     <>
-    <header className="flex items-center justify-between border-b px-6 py-3">
-    <span className="text-lg font-semibold">UAS Permit Tracker</span>
+    <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
+    <span className="text-lg font-semibold">Tracker 9000</span>
     <nav className="flex gap-2">
-      <Button variant="ghost">Permits</Button>
-      <Button variant="ghost">Add permit</Button>
+      {/* <Button variant="ghost">Add permit</Button> */}
+     <AddPermitDialog />
+  
     </nav>
   </header>
     <main className="main-layout">
@@ -40,11 +43,11 @@ export default function App() {
             </div>
 
             <div className="activity-column">
-              {selectedPermit ? (
-                <ActivityCard permit={selectedPermit} />
-              ) : (
-                <p>Select a permit to see its activities.</p>
-              )}
+              {selectedPermit && (
+                <ActivityCard key={selectedPermit.id} permit={selectedPermit} />
+
+              )
+              }
             </div>
             <div className='activity-table'>
               {selectedPermit && (<ShowActivityTable key= {selectedPermit.id }permitId={selectedPermit.id}></ShowActivityTable>)}

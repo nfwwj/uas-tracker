@@ -1,24 +1,31 @@
 import type { NewActivity } from './activity'
 
-// GET /permits (getPendingPermits): one card on the home page
+// /GET /permits (used as state type for frontend components)
+// used in permit API
 export interface Permit {
   id: number
   permitNo: string
   applicationNum: string
-  _count: { activities: number } // number of pending (status N) activities
-  activities: { activityDateTime: string }[] // soonest pending activity only
+  _count: { activities: number } 
+  activities: { activityDateTime: string }[] 
+  altitudeFt: number
+  class: number
+  coordinates: string
 }
 
-// POST /permits/parse response (py-interface.json)
+// POST /permits/parse response (what py server return)
+// used in permit API
 export interface ParsedPermit {
   permitNo: string
   applicationNum: string
   altitudeFt: number
   class: number
+  coordinates: string
   activities: NewActivity[]
 }
 
 // POST /permits body
+// used in permitAPI
 export interface createPermitandActivities extends ParsedPermit {
-  fullText: string
+  fullText?: string
 }
