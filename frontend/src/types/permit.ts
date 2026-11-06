@@ -29,3 +29,4 @@ export interface ParsedPermit {
 export interface createPermitandActivities extends ParsedPermit {
   fullText?: string
 }
+

@@ -33,7 +33,7 @@
 }
 
 /* app.tsx */
-.activity-column{
+.details-column{
   flex: 0 0 18rem;      /* no grow, no shrink, always 24rem */
   min-width: 0;
   display: flex;        /* gap does nothing without flex/grid */
@@ -52,6 +52,7 @@
   align-self: flex-start;
   top: 4.5rem;          /* below the sticky header (~3.5rem) + 1rem gap */
   position: sticky;
+  max-width: 18rem;
 }
 
 /* app.tsx */
@@ -60,22 +61,27 @@
   flex-direction: row;
   gap: 0.5rem;
   align-items: flex-start;
-  flex: 0 0 18rem;
-  min-width: 0;         /* else it grows to fit long rows, so width changes per permit */
+  
 }
 
 /* activityTable.tsx */
+.notam-check,
 .notam-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;                
-}
-
-/* activityTable.tsx */
-.notam-check {
  display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* app.tsx; same as .activity-column */
+.previousnotams-column{
+  flex: 0 0 22rem;
+  min-width: 0;
+  display: flex;
+  align-self: flex-start;
+  flex-direction: column;
+  gap: 0.5rem;
+  top: 4.5rem;
+  position: sticky;
 }
 
 

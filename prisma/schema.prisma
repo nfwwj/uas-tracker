@@ -17,12 +17,13 @@ datasource db {
 model Permit {
   id             Int        @id @default(autoincrement())
   permitNo       String     @unique       
-  applicationNum String                    
+  applicationNum String     @unique        
   altitudeFt     Int
   class          Int
   fullText        String?
   coordinates     String?                  
   activities     Activity[]
+  createdAt     DateTime  @default(now())
 }
 
 model Activity {

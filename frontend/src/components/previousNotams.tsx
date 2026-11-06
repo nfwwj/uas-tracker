@@ -1,5 +1,5 @@
-import { getActivitiesByPermitId, findMrefsByPermitId, deleteNotam} from '../api/activityAPI'
-import { type Permit } from '../types/permit'
+import { getActivitiesByPermitId, findMrefsByPermitId, deleteNotam, editNotam} from '../api/activityAPI'
+import type {Permit } from '../types/permit'
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -12,9 +12,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import { Separator } from "@/components/ui/separator"
+
 import {
-  Card3D, Card3DBody, Card3DItem,
-} from "@/components/ui/card-3d";
+  Field,
+  FieldDescription,
+  FieldLabel,
+} from "@/components/ui/field"
+
+import { Input } from "@/components/ui/input"
 
 import { toast } from "@/components/ui/toast"
 import {
@@ -27,7 +33,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 
-import { Trash2Icon } from "lucide-react"
+import { Trash2Icon, SquarePen } from "lucide-react"
 
 import {
   AlertDialog,
@@ -42,32 +48,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Spinner } from './ui/spinner'
+import { useRef } from 'react'
 
-function ActivityCard({ permit }: { permit: Permit }){
-  const activitiesQuery = useQuery({
-    queryKey: ["activities", permit.id],
-    queryFn: () => getActivitiesByPermitId(permit.id),
-  })
-
-  return(
-    <>
-    <p className="text-2xl font-bold animate-enter">Details</p>
-        <Card className="animate-enter">
-          <CardHeader>
-            <CardTitle>{permit.applicationNum}</CardTitle>
-            {/* <CardDescription>{permit.permitNo}</CardDescription> */}
-            <CardDescription>{permit.altitudeFt} ft · Class {permit.class}</CardDescription>
-            <CardDescription>{permit.coordinates}</CardDescription>
-            <CardDescription>{activitiesQuery.data?.length ?? 0} activities pending</CardDescription>
-          </CardHeader>
-        </Card>
-
-        <ShowPreviousMrefs permitId={permit.id} />
-
-       
-    </>
-  )
-}
 function ShowPreviousMrefs({permitId}: {permitId: number}){
     const mrefQuery = useQuery({
     queryKey: ["mref", permitId],
@@ -78,17 +60,21 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
   if (mrefQuery.error) return <p>Error: {String(mrefQuery.error)}</p>
   if (mrefQuery.data.length == 0){
     return (
-   
-    <Card className="animate-enter" style={{ animationDelay: "75ms" }}>
+    <>
+    <p className="text-2xl font-bold animate-enter"  style={{ animationDelay: "250ms" }} >Previous NOTAMs</p>
+    <Card className="animate-enter" style={{ animationDelay: "250ms" }}>
             <CardHeader>
               <CardTitle>Previous NOTAMs taken</CardTitle>
               <CardDescription>No previous NOTAMs taken.</CardDescription>
             </CardHeader>
     </Card>
+    </>
 ) 
   } 
  return (
-  <Card className="animate-enter" style={{ animationDelay: "75ms" }}>
+    <>
+    <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "250ms" }}>Previous NOTAMs</p>
+  <Card className="animate-enter" style={{ animationDelay: "250ms" }}>
           <CardHeader>
             <CardTitle>Previous NOTAMs taken</CardTitle>
             <CardDescription>Not arranged in order.</CardDescription>
@@ -108,9 +94,12 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
                   <TableRow key={data.mref} className="cursor-default hover:bg-transparent">
                   <TableCell>{data.mref}</TableCell>
                   <TableCell>{data.takenBy}</TableCell>    
-                  <TableCell>
-                    <AlertDialogDestructive mref={data.mref} permitId={permitId}></AlertDialogDestructive>
-                    </TableCell>            
+                  <TableCell className="w-px whitespace-nowrap">
+                     <div className="flex items-center justify-end gap-1">
+                        <EditNotam mref={data.mref} permitId={permitId}></EditNotam>
+                        <DeleteNotam mref={data.mref} permitId={permitId}></DeleteNotam>
+                      </div>
+                  </TableCell>
                 </TableRow>
                 ))}
               </TableBody>
@@ -120,10 +109,11 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
 
 
   </Card>
+  </>
 )
 }
 
-export function AlertDialogDestructive({mref, permitId}: {mref: string, permitId: number}) {
+ function DeleteNotam({mref, permitId}: {mref: string, permitId: number}) {
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: deleteNotam,
@@ -179,7 +169,79 @@ export function AlertDialogDestructive({mref, permitId}: {mref: string, permitId
   )
 }
 
+ function EditNotam({mref, permitId}: {mref: string, permitId: number}) {
+  const queryClient = useQueryClient()
+  const newmrefRef = useRef<HTMLInputElement>(null)
+
+  const mutation = useMutation({
+    mutationFn: editNotam,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mref", permitId] })
+
+      toast.add({
+      title: "NOTAM edited successfully.",
+      description: mref,
+      type: "success"
+    })
+    
+  },
+  onError: (error) => {
+    toast.add({
+      title: "Something went wrong.",
+      description: `Error ${error.response?.data.statusCode ?? "XXX"} (${error.response?.statusText ?? "Server error"}): ${error.response?.data.message ?? "Something went wrong."} `,
+      type: "error"
+    })
+  }
+})
+
+  function handleEdit(){
+    const mrefData = newmrefRef.current?.value.trim() ?? ""
+
+    if (!/^M\d{9}$/.test(mref)) {
+      toast.add({
+      title: "Missing Mref!",
+      description: `Mref can't be empty!`,
+      type: "warning"
+      })
+
+      return
+    }
+    mutation.mutate({oldmref: mref, newmref: mrefData, permitId: permitId })
+  }
 
 
+  return (
+    <AlertDialog >
+      <AlertDialogTrigger
+        render={<Button variant="outline" className="cursor-pointer"><SquarePen /></Button>}
+      />
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogMedia>
+            <SquarePen />
+          </AlertDialogMedia>
+          <AlertDialogTitle>Edit NOTAM</AlertDialogTitle>
+          <AlertDialogDescription>
+            The mref of this NOTAM will be changed
+            
+          </AlertDialogDescription>
 
-export default ActivityCard
+          <Field>
+          
+            <Input id="newmref" type="text" placeholder="M202601234" ref={newmrefRef} />
+            
+          </Field>
+
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleEdit} disabled={mutation.isPending}>
+            {mutation.isPending && (<Spinner></Spinner>)}
+            Edit</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+export default ShowPreviousMrefs

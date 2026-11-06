@@ -1,5 +1,5 @@
 // src/permit/permit.controller.ts
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { CreatePermitDTO } from './dto/permit-dto';
 import { ParsePermitDTO } from './dto/permit-dto';
 import { PermitService } from './permit.service';
@@ -18,6 +18,11 @@ export class PermitController {
   @Get()
   async getPendingPermits(){
     return this.permitService.getPendingPermits()
+  }
+
+  @Get('search')  
+  async search(@Query('applicationNumber') applicationNumber: string) {
+    return this.permitService.search(applicationNumber)
   }
 
   @Get("count")
@@ -44,6 +49,11 @@ export class PermitController {
   @Delete('id/:id')
   async deletePermit(@Param("id", ParseIntPipe) id:number){
     return this.permitService.deletePermit(id);
+  }
+
+  @Delete('all')
+  async deleteAllPermits(){
+    return this.permitService.deleteAllPermits()
   }
 
   

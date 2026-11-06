@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import DisplayPermits from './components/DisplayPermits'
-import ActivityCard from './components/activityCard'
+import DisplayPermits from './components/displayPermits'
+import DetailsCard from './components/detailsCard'
 
 import { type Permit } from './types/permit'
 
@@ -10,16 +10,12 @@ import { Button } from "@/components/ui/button"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { AddPermitDialog } from './components/addPermit'
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
+
+import { PermitSearch} from './components/searchBar'
 
 import { PlusIcon } from 'lucide-react'
+
+import ShowPreviousMrefs from "./components/previousNotams"
 
 export default function App() {
   const [selectedPermit, setSelectedPermit] = useState<Permit | null>(null)
@@ -30,8 +26,9 @@ export default function App() {
     <span className="text-lg font-semibold">Tracker 9000</span>
     <nav className="flex gap-2">
       {/* <Button variant="ghost">Add permit</Button> */}
+     <PermitSearch onSelect={setSelectedPermit} />
      <AddPermitDialog />
-  
+
     </nav>
   </header>
     <main className="main-layout">
@@ -42,16 +39,20 @@ export default function App() {
               <DisplayPermits onSelect={setSelectedPermit} selectedId={selectedPermit?.id} />
             </div>
 
-            <div className="activity-column">
+            <div className="details-column">
               {selectedPermit && (
-                <ActivityCard key={selectedPermit.id} permit={selectedPermit} />
+                <DetailsCard key={selectedPermit.id} permit={selectedPermit} />
 
               )
               }
             </div>
             <div className='activity-table'>
-              {selectedPermit && (<ShowActivityTable key= {selectedPermit.id }permitId={selectedPermit.id}></ShowActivityTable>)}
+              {selectedPermit && (<ShowActivityTable key= {selectedPermit.id } permitId={selectedPermit.id}></ShowActivityTable>)}
               
+            </div>
+
+            <div className='previousnotams-column'>
+              {selectedPermit && ( <ShowPreviousMrefs key= {selectedPermit.id } permitId={selectedPermit.id} />)}
             </div>
         </ThemeProvider>
     </main>

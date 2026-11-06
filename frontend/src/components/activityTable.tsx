@@ -55,7 +55,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
 
   function toggleRow(activityId: number) {
     setSelectedIds((prev) => {
-    if (prev.includes(activityId)) {        // ← now checks prev
+    if (prev.includes(activityId)) {        
       return prev.filter((id) => id !== activityId)
     } else {
       return [...prev, activityId]
