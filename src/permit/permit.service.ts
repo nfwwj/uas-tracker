@@ -67,6 +67,20 @@ export class PermitService {
     return permit;
   }
 
+  async search(applicationNumber:string){
+    return this.prismaService.permit.findMany({
+    where: {
+      OR: [
+        {applicationNum: { endsWith: applicationNumber, mode: 'insensitive' }},
+        {applicationNum: { contains: applicationNumber, mode: "insensitive"}}
+      ]
+      
+    },
+    take: 5,
+  })
+}
+  
+
   async findPermitByPermitNo(permitNo: string) {
     const permit = await this.prismaService.permit.findUnique({
       where: {permitNo: permitNo}
@@ -120,6 +134,10 @@ export class PermitService {
 
     return permits.sort((a,b) => a.activities[0].activityDateTime.getTime() - b.activities[0].activityDateTime.getTime() ||
       a.id - b.id)
+  }
+
+  async deleteAllPermits(){
+    return this.prismaService.permit.deleteMany()
   }
 
 

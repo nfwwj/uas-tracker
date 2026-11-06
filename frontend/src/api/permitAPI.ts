@@ -23,6 +23,11 @@ export async function getTotalNumPermits() {
     return response.data
 }
 
+export async function searchPermits(applicationNumber: string) {
+    const response = await server.get(`/permits/search`, { params: {applicationNumber} })
+    return response.data
+}
+
 export async function parsePermit(text: string) {
     const response = await server.post<ParsedPermit>(`/permits/parse`, { text })
     return response.data

@@ -1,5 +1,5 @@
 import server from "./server"
-import type { Activity, cancelNotam, takeNotam } from "../types/activity"
+import type { Activity, cancelNotam, editNotam, takeNotam } from "../types/activity"
 
 export async function getActivitiesByPermitId(permitId: number) {
     // activityCard and activityTable
@@ -22,4 +22,9 @@ export async function takeNotam(data: takeNotam) {
 export async function deleteNotam(data: cancelNotam) {
     const response = await server.patch(`/activities/cancelnotam`, data)
     return response.data
+}
+
+export async function editNotam(data: editNotam){
+    const response = await server.patch(`/activities/editnotam`,data)
+    return response.data //?
 }

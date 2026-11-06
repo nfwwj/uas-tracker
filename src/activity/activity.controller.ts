@@ -1,7 +1,7 @@
 // src/activity/activity.controller.ts
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Patch, Query } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Query } from '@nestjs/common';
 import { ActivityService } from './activity.service';
-import { CancelNotamDTO, TakeNotamDTO } from './dto/activity.dto';
+import { CancelNotamDTO, TakeNotamDTO, EditNotamDTO} from './dto/activity.dto';
 
 import { setTimeout as sleep } from 'node:timers/promises';
 
@@ -13,6 +13,10 @@ export class ActivityController {
   // async getActivitiesByPermitNo(@Query('permitNo') permitNo: string) {
   //   return this.activityService.getActivitiesByPermitNo(permitNo);
   // }
+  @Get()
+  async getAllActivities(){
+    return this.activityService.getAllActivities()
+  }
   
 
   @Get('id/:id')
@@ -29,6 +33,12 @@ export class ActivityController {
   async takeNotam(@Body() data: TakeNotamDTO) {
     await sleep(1500);
     return this.activityService.takeNotam(data);
+  }
+
+  @Patch('editnotam')
+  async editNotam(@Body() data: EditNotamDTO){
+    await sleep(1500);
+    return this.activityService.editNotam(data);
   }
 
   @Patch('cancelnotam') // PATCH /api/activities/notam/cancel, mref in body (NOTAM refs contain "/")

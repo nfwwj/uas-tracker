@@ -27,3 +27,9 @@ export interface takeNotam {
 export interface cancelNotam {
   mref: string
 }
+
+export interface editNotam {
+  permitId: number
+  oldmref: string
+  newmref : string
+}

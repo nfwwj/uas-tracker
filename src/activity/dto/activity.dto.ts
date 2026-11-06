@@ -1,4 +1,4 @@
-import { IsISO8601, IsNotEmpty, IsString, ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsString, ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt, IsNumber } from 'class-validator';
 
 export class CreateActivityDTO {
   // mref, takenBy not included because empty by default
@@ -29,4 +29,15 @@ export class TakeNotamDTO {
 export class CancelNotamDTO {
   @IsString() @IsNotEmpty()
   mref: string;
+}
+
+export class EditNotamDTO{
+  @IsNumber() @IsNotEmpty()
+  permitId: number
+
+  @IsString() @IsNotEmpty()
+  newmref: string
+
+  @IsString() @IsNotEmpty()
+  oldmref: string
 }
