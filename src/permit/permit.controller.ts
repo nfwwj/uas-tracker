@@ -1,5 +1,5 @@
 // src/permit/permit.controller.ts
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, HttpCode } from '@nestjs/common';
 import { CreatePermitDTO } from './dto/permit-dto';
 import { ParsePermitDTO } from './dto/permit-dto';
 import { PermitService } from './permit.service';
@@ -11,6 +11,7 @@ export class PermitController {
   constructor(private readonly permitService: PermitService) {}
 
   @Post('parse')
+  @HttpCode(200)
   async parseText(@Body() data: ParsePermitDTO) {
     return this.permitService.parseText(data);
   }
@@ -30,7 +31,7 @@ export class PermitController {
     return this.permitService.getTotalNumPermits()
   }
 
-  @Get('id/:id') 
+  @Get(':id') 
   async findPermitById(@Param('id', ParseIntPipe) id: number) {
     return this.permitService.findPermitById(id);
   }
@@ -46,7 +47,8 @@ export class PermitController {
     return this.permitService.addPermitandActivities(data);
   }
 
-  @Delete('id/:id')
+  @Delete(':id')
+  @HttpCode(204)
   async deletePermit(@Param("id", ParseIntPipe) id:number){
     return this.permitService.deletePermit(id);
   }

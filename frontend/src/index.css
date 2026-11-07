@@ -34,7 +34,7 @@
 
 /* app.tsx */
 .details-column{
-  flex: 0 0 18rem;      /* no grow, no shrink, always 24rem */
+  flex: 0 0 16rem;      /* no grow, no shrink, always 24rem */
   min-width: 0;
   display: flex;        /* gap does nothing without flex/grid */
   flex-direction: column;
@@ -52,7 +52,7 @@
   align-self: flex-start;
   top: 4.5rem;          /* below the sticky header (~3.5rem) + 1rem gap */
   position: sticky;
-  max-width: 18rem;
+  max-width: 16rem;
 }
 
 /* app.tsx */
@@ -74,14 +74,13 @@
 
 /* app.tsx; same as .activity-column */
 .previousnotams-column{
-  flex: 0 0 22rem;
-  min-width: 0;
+  
   display: flex;
-  align-self: flex-start;
   flex-direction: column;
   gap: 0.5rem;
   top: 4.5rem;
   position: sticky;
+  width: fit-content;
 }
 
 

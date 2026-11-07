@@ -1,4 +1,4 @@
-import { IsISO8601, IsNotEmpty, IsString, ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt, IsNumber } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsString, ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt, IsNumber, Matches, MaxLength  } from 'class-validator';
 
 export class CreateActivityDTO {
   // mref, takenBy not included because empty by default
@@ -15,19 +15,21 @@ export class CreateActivityDTO {
   activityDateTime: string;
 }
 
+const MREF = /^M\d{9}$/
+
 export class TakeNotamDTO {
   @IsArray() @ArrayNotEmpty() @IsInt({ each: true })
   ids: number[];
 
-  @IsString() @IsNotEmpty()
+  @IsString() @Matches(MREF)
   mref: string;
 
-  @IsString() @IsNotEmpty()
+  @IsString() @MaxLength(10)
   takenBy: string;
 }
 
 export class CancelNotamDTO {
-  @IsString() @IsNotEmpty()
+  @IsString()
   mref: string;
 }
 
@@ -35,9 +37,9 @@ export class EditNotamDTO{
   @IsNumber() @IsNotEmpty()
   permitId: number
 
-  @IsString() @IsNotEmpty()
-  newmref: string
+  @IsString() @Matches(MREF)
+  newMref: string
 
-  @IsString() @IsNotEmpty()
-  oldmref: string
+  @IsString() @Matches(MREF)
+  oldMref: string
 }

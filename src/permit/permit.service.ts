@@ -68,6 +68,10 @@ export class PermitService {
   }
 
   async search(applicationNumber:string){
+    if (!applicationNumber?.trim()){
+      return []
+    } 
+
     return this.prismaService.permit.findMany({
     where: {
       OR: [
@@ -127,13 +131,12 @@ export class PermitService {
           select: {activityDateTime: true},
           take: 1
         }  
-    },
-    take: 5
+    }
   }
   )
 
     return permits.sort((a,b) => a.activities[0].activityDateTime.getTime() - b.activities[0].activityDateTime.getTime() ||
-      a.id - b.id)
+      a.id - b.id).slice(0, 5)
   }
 
   async deleteAllPermits(){

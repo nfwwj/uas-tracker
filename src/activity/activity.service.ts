@@ -12,10 +12,10 @@ export class ActivityService {
     return this.prismaService.activity.findMany()
   }
 
-  async getActivitiesByPermitId(permitId: number) { 
+  async getActivities(permitId: number, mref?: string) {
     return this.prismaService.activity.findMany({
-      where: {permitId: permitId, status: "N"},
-      orderBy: [{activityDateTime:"asc"}, {id:"asc"}] // nee
+      where: mref ? {permitId, mref} : {permitId, status: "N"},
+      orderBy: [{activityDateTime:"asc"}, {id:"asc"}]
     });
   }
 
@@ -30,27 +30,29 @@ export class ActivityService {
     })
   }
  
-  async findMrefsByPermitId(permitId: number) {
-    const permit = await this.prismaService.activity.findMany({
+  async getMrefsByPermitId(permitId: number) {
+    return this.prismaService.activity.findMany({
       where: {permitId : permitId, mref: { not: null } },
       distinct: ['mref'],
       select: { mref: true, takenBy: true }
     });
-    return permit
   }
 
   async editNotam(data: EditNotamDTO){
-    const mrefExists = await this.prismaService.activity.findFirst({where: {mref: data.newmref}})
+    if (data.newMref === data.oldMref) {
+      throw new BadRequestException("New mref is the same as the old one.")
+    }
+
+    const mrefExists = await this.prismaService.activity.findFirst({where: {mref: data.newMref}})
     if (mrefExists){
       throw new ConflictException("Mref already exists!")
     }
 
-    const notam = await this.prismaService.activity.updateMany({
-      where: {permitId: data.permitId, mref: data.oldmref},
-      data: {mref: data.newmref}
+    await this.prismaService.activity.updateMany({
+      where: {permitId: data.permitId, mref: data.oldMref},
+      data: {mref: data.newMref}
     })
 
-    return notam
   }
 
   // 4b. cancel NOTAM: every activity under this mref goes back to N
@@ -61,11 +63,9 @@ export class ActivityService {
     if (!notamExists) {
       throw new NotFoundException('NOTAM not found!');
     }
-    const notam = await this.prismaService.activity.updateMany({
+    await this.prismaService.activity.updateMany({
       where: { mref: data.mref },
       data: { status: 'N', mref: null, takenBy: null },
     });
-   
-    return notam
   }
 }

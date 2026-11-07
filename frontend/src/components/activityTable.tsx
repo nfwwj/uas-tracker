@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getActivitiesByPermitId, takeNotam } from "../api/activityAPI"
+import { getActivities, takeNotam } from "../api/activityAPI"
 import { cn } from "cn"
 import {
   Table,
@@ -45,7 +45,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
 
   const activitiesQuery = useQuery({
     queryKey: ["activities", permitId],
-    queryFn: () => getActivitiesByPermitId(permitId),
+    queryFn: () => getActivities(permitId),
   })
   const [selectedIds, setSelectedIds] = useState<number[]>([])
 
@@ -78,7 +78,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
           
           <TableHead>Activity Date</TableHead>
           <TableHead>Time</TableHead>
-          <TableHead>Activity ID</TableHead>
+          {/* <TableHead>Activity ID</TableHead> */}
         </TableRow>
       </TableHeader>
 
@@ -105,7 +105,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
               
               <TableCell className="text-lg">{activity.activityDate}</TableCell>
               <TableCell className="text-lg">{activity.activityTime}</TableCell>
-              <TableCell className="text-lg">{activity.id}</TableCell>
+              {/* <TableCell className="text-lg">{activity.id}</TableCell> */}
           </TableRow>
           )})}
           

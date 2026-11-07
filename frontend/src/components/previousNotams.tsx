@@ -1,7 +1,25 @@
-import { getActivitiesByPermitId, findMrefsByPermitId, deleteNotam, editNotam} from '../api/activityAPI'
+import { getActivities, findMrefsByPermitId, deleteNotam, editNotam} from '../api/activityAPI'
 import type {Permit } from '../types/permit'
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 import {
   Table,
@@ -48,9 +66,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Spinner } from './ui/spinner'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 function ShowPreviousMrefs({permitId}: {permitId: number}){
+
+    const [selectedMref, setselectedMref] = useState<string | null>(null)
+
+    function cancel(){
+      setselectedMref(null)
+    }
+
     const mrefQuery = useQuery({
     queryKey: ["mref", permitId],
     queryFn: () => (findMrefsByPermitId(permitId))
@@ -92,7 +117,11 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
               <TableBody >
                 {mrefQuery.data.map((data)=>(
                   <TableRow key={data.mref} className="cursor-default hover:bg-transparent">
-                  <TableCell>{data.mref}</TableCell>
+            
+                  <TableCell>
+                    <ShowNotamActivities permitId={permitId} mref={data.mref} />
+                  </TableCell>
+                
                   <TableCell>{data.takenBy}</TableCell>    
                   <TableCell className="w-px whitespace-nowrap">
                      <div className="flex items-center justify-end gap-1">
@@ -106,9 +135,9 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
             </Table>
 
           </CardContent>
-
-
   </Card>
+
+  
   </>
 )
 }
@@ -197,7 +226,7 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
   function handleEdit(){
     const mrefData = newmrefRef.current?.value.trim() ?? ""
 
-    if (!/^M\d{9}$/.test(mref)) {
+    if (!/^M\d{9}$/.test(mrefData)) {
       toast.add({
       title: "Missing Mref!",
       description: `Mref can't be empty!`,
@@ -206,7 +235,8 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
 
       return
     }
-    mutation.mutate({oldmref: mref, newmref: mrefData, permitId: permitId })
+    mutation.mutate({ oldMref: mref, newMref: mrefData, permitId: permitId })
+
   }
 
 
@@ -242,6 +272,165 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
       </AlertDialogContent>
     </AlertDialog>
   )
+
 }
+
+
+function ShowNotamActivities({permitId, mref}: {permitId: number, mref: string | null}){
+
+   const activitiesQuery = useQuery({
+    queryKey: ["activities", permitId, mref],
+    queryFn: () => getActivities(permitId, mref ?? undefined),
+  });
+
+   return (
+    <Popover >
+      <PopoverTrigger
+          render={
+            <button
+              type="button"
+              className="cursor-pointer font-medium text-primary underline underline-offset-4 hover:text-primary/70"
+            />
+          }
+        >
+          {mref}
+        </PopoverTrigger>
+      {/* w-fit replaces the base w-72: the popup sizes to its table */}
+      <PopoverContent className="w-fit">
+        <PopoverHeader>
+          <PopoverTitle>{mref}</PopoverTitle>
+          <PopoverDescription>Activities covered by this NOTAM.</PopoverDescription>
+        </PopoverHeader>
+        
+         <Table> 
+             
+              <TableHeader>
+                <TableRow className="cursor-default hover:bg-transparent">
+                  <TableHead>Activity Date</TableHead>
+                  <TableHead>Time</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody >
+                {activitiesQuery.data?.map((data)=>(
+                  <TableRow key={data.activityDate} className="cursor-default hover:bg-transparent text-xs">
+            
+                  <TableCell>
+                    {data.activityDate}
+                  </TableCell>
+
+                  <TableCell>
+                    {data.activityTime}
+                  </TableCell>
+                
+                </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function ShowNotamActivities({permitId, mref, onCancel}: {permitId: number, mref: string | null, onCancel : () => void}){
+
+//    const activitiesQuery = useQuery({
+//     queryKey: ["activities", permitId, mref],
+//     queryFn: () => getActivities(permitId, mref ?? undefined),
+//   });
+
+//   return(
+//   <>
+//   <AlertDialog open={mref ? true : false}>
+//     <AlertDialogContent className="sm:max-w-2xl">
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>{mref}</AlertDialogTitle>
+//           <AlertDialogDescription>
+//             Activities covered by this NOTAM.
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+
+//         <div className="max-h-80 overflow-y-auto">
+//           {activitiesQuery.isPending && <Spinner />}
+
+//           {activitiesQuery.isError && (
+//             <p className="text-sm text-destructive">
+//               Failed to load activities.
+//             </p>
+//           )}
+
+//           {activitiesQuery.data?.length === 0 && (
+//             <p className="text-sm text-muted-foreground">No activities found.</p>
+//           )}
+
+//           {activitiesQuery.data && activitiesQuery.data.length > 0 && (
+//             <Table>
+//               <TableHeader>
+//                 <TableRow className="hover:bg-transparent">
+//                   <TableHead className="w-12">#</TableHead>
+//                   <TableHead>Date &amp; time</TableHead>
+//                   <TableHead>Status</TableHead>
+//                   {/* add headers for other Activity fields here */}
+//                 </TableRow>
+//               </TableHeader>
+//               <TableBody>
+//                 {activitiesQuery.data.map((activity, index) => (
+//                   <TableRow key={activity.id}>
+//                     <TableCell className="text-muted-foreground">
+//                       {index + 1}
+//                     </TableCell>
+//                     <TableCell className="whitespace-nowrap">
+//                       {activity.activityDateTime}
+//                     </TableCell>
+//                     <TableCell>{activity.status}</TableCell>
+//                     {/* and the matching cells here */}
+//                   </TableRow>
+//                 ))}
+//               </TableBody>
+//             </Table>
+//           )}
+//         </div>
+
+//         <AlertDialogFooter>
+//           <AlertDialogCancel onClick={onCancel}>Close</AlertDialogCancel>
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+  
+//   </>
+//   )
+// }
+
+
+
+
+
+
+
+
+
+
 
 export default ShowPreviousMrefs

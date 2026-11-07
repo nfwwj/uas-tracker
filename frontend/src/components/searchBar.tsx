@@ -25,7 +25,7 @@ export function PermitSearch({ onSelect }: { onSelect: (permit: Permit) => void 
   return (
     <>
      <Combobox items={options}>
-      <ComboboxInput placeholder="Search By" className="w-48" />
+      <ComboboxInput placeholder="Search By (WIP)" disabled className="w-48" />
       <ComboboxContent>
         <ComboboxEmpty>No items found.</ComboboxEmpty>
         <ComboboxList>

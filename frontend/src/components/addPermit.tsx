@@ -10,6 +10,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { Spinner } from "@/components/ui/spinner"
 
 import {
@@ -133,7 +142,7 @@ export function AddPermitDialog() {
     
   return (
     <>
-    {/* reset on any close (Cancel, Esc), so reopening shows the empty form */}
+
     <AlertDialog open={open} onOpenChange={(isOpen) => { setOpen(isOpen); if (!isOpen) setparsedPermit(null) }}>
       <AlertDialogTrigger render={<Button variant="ghost">Add permit</Button>} />
 
