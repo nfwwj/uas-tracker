@@ -13,35 +13,38 @@ export class ActivityController {
   // async getActivitiesByPermitNo(@Query('permitNo') permitNo: string) {
   //   return this.activityService.getActivitiesByPermitNo(permitNo);
   // }
-  @Get()
-  async getAllActivities(){
-    return this.activityService.getAllActivities()
-  }
+  // @Get()
+  // async getAllActivities(){
+  //   return this.activityService.getAllActivities()
+  // }
   
-
-  @Get('id/:id')
-  async getActivitiesByPermitId(@Param('id', ParseIntPipe) id: number) {
-    return this.activityService.getActivitiesByPermitId(id);
+  // always Activity[]: pending ones, or with &mref= that NOTAM's ones (mref dialog)
+  @Get() // GET /api/activities?permitId=1[&mref=M202601234]
+  async getActivities(@Query('permitId', ParseIntPipe) permitId: number,
+                      @Query('mref') mref?: string) {
+    return this.activityService.getActivities(permitId, mref);
   }
 
-  @Get('mrefs/:permitId') // GET /api/activities/mrefs/1
-  async findMrefsByPermitId(@Param('permitId', ParseIntPipe) permitId: number) {
-    return this.activityService.findMrefsByPermitId(permitId);
+  // always [{ mref, takenBy }]: the permit's unique mrefs (prev NOTAMs table)
+  @Get('mrefs') // GET /api/activities/mrefs?permitId=1
+  async getMrefsByPermitId(@Query('permitId', ParseIntPipe) permitId: number) {
+    return this.activityService.getMrefsByPermitId(permitId);
   }
 
-  @Patch('takenotam') // PATCH /api/activities/notam
+
+  @Patch('take-notam') // PATCH /api/activities/take-notam
   async takeNotam(@Body() data: TakeNotamDTO) {
     await sleep(1500);
     return this.activityService.takeNotam(data);
   }
 
-  @Patch('editnotam')
+  @Patch('edit-notam') // PATCH /api/activities/edit-notam
   async editNotam(@Body() data: EditNotamDTO){
     await sleep(1500);
     return this.activityService.editNotam(data);
   }
 
-  @Patch('cancelnotam') // PATCH /api/activities/notam/cancel, mref in body (NOTAM refs contain "/")
+  @Patch('cancel-notam') // PATCH /api/activities/cancel-notam
   async deleteNotam(@Body() data: CancelNotamDTO) {
     await sleep(1500);
     return this.activityService.deleteNotam(data);

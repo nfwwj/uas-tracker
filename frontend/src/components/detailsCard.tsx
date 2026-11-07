@@ -1,4 +1,4 @@
-import { getActivitiesByPermitId, findMrefsByPermitId, deleteNotam} from '../api/activityAPI'
+import { getActivities, findMrefsByPermitId, deleteNotam} from '../api/activityAPI'
 import { type Permit } from '../types/permit'
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -52,7 +52,7 @@ import { Spinner } from './ui/spinner'
 function DetailsCard({ permit }: { permit: Permit }){
   const activitiesQuery = useQuery({
     queryKey: ["activities", permit.id],
-    queryFn: () => getActivitiesByPermitId(permit.id),
+    queryFn: () => getActivities(permit.id),
   })
 
   return(

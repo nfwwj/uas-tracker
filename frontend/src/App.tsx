@@ -13,7 +13,7 @@ import { AddPermitDialog } from './components/addPermit'
 
 import { PermitSearch} from './components/searchBar'
 
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, Plane  } from 'lucide-react'
 
 import ShowPreviousMrefs from "./components/previousNotams"
 
@@ -22,8 +22,15 @@ export default function App() {
 
   return(
     <>
-    <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
-    <span className="text-lg font-semibold">Tracker 9000</span>
+    <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3"> 
+
+        <div className='flex items-center cursor-pointer'>
+          <Plane className='h-5 w-5' />
+          <span className="text-lg font-semibold">AirTrack</span>
+        </div>
+        
+   
+    
     <nav className="flex gap-2">
       {/* <Button variant="ghost">Add permit</Button> */}
      <PermitSearch onSelect={setSelectedPermit} />

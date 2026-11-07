@@ -6,7 +6,7 @@ export interface NewActivity {
 }
 
 // GET /activities/id/:id response
-// used in activity API getActivitiesByPermitId
+// used in activity API getActivities
 export interface Activity extends NewActivity {
   id: number
   permitId: number
@@ -30,6 +30,6 @@ export interface cancelNotam {
 
 export interface editNotam {
   permitId: number
-  oldmref: string
-  newmref : string
+  oldMref: string
+  newMref: string
 }
