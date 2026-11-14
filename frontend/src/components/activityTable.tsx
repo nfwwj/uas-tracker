@@ -92,6 +92,8 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
           ) :
           activitiesQuery.data.map((activity) => {
           const selected = selectedIds.includes(activity.id)
+          const expired = new Date(activity.activityDateTime) < new Date()
+
           return (
             <TableRow
             key={activity.id} //need this key?
@@ -103,8 +105,8 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
                 checked={selected}/>
               </TableCell>
               
-              <TableCell className="text-lg">{activity.activityDate}</TableCell>
-              <TableCell className="text-lg">{activity.activityTime}</TableCell>
+              <TableCell className={cn("text-lg", expired && "text-destructive")}>{activity.activityDate}</TableCell>
+              <TableCell className={cn("text-lg", expired && "text-destructive")}>{activity.activityTime}</TableCell>
               {/* <TableCell className="text-lg">{activity.id}</TableCell> */}
           </TableRow>
           )})}
@@ -204,6 +206,12 @@ export function NotamInput({selected, permitId, onTaken, dataLength}: {selected:
               <Checkbox id="check2" name="check2" key={resetKey} inputRef={check2Ref}/>
               <Label htmlFor="check2">No more than 3 DLY BTN, or more than the maximum number of activity records allowed, are being taken.</Label>
             </Field>
+
+            <Field orientation="horizontal">
+              <Checkbox id="check3"/>
+              <Label htmlFor="check3"><span className="animate-rainbow">(optional) Model is awesome!</span></Label>
+            </Field>
+            
              </div>
           
             <p className='text-sm text-muted-foreground'>Selected {selected.length} of {dataLength ?? "?"} record(s)</p>

@@ -63,8 +63,8 @@ function DisplayPermits({ onSelect, selectedId }: {onSelect: (permit: Permit) =>
 
 
        <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Dislaying {permits.length} of {total} permits</p>
-      <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Arranged by starting date.</p>
-       <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Refreshed on every new entry.</p>
+      <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Arranged by soonest starting activity. Excludes expired activities.</p>
+       <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Refreshed on every new submission.</p>
      
   </>
   )

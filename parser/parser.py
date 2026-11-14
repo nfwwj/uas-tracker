@@ -90,7 +90,7 @@ def extract_activities_from_pdf(text):
         end_idx = None
         for i, line in enumerate(lines):
             if start_idx is None and re.search(
-                r"Activity Date\s+Activity Time", line #Still extracting altitude?
+                r"Activity Date\s+Activity Time", line 
             ):
                 start_idx = i + 1
             elif start_idx is not None and re.match(r"Table 1\.", line.strip()):
@@ -100,16 +100,25 @@ def extract_activities_from_pdf(text):
         if start_idx is None:
             raise ValueError("Could not locate table.")
 
-        # Extracts date and time text from PDF, into one string
-        # ['24 May 2026 0000LT to 2359LT', ...]
+        # Combines all the activity date n time str found in the table into one str
+        # formatted and split in later steps
+        # e.g. 01 November 2026 0700LT  to 1800LT 07 November 2026...
         table = " ".join(lines[start_idx:end_idx])
 
-        date = r"\d{1,2}[\s-]+[A-Za-z]+[\s-]+\d{2,4}" 
+        # date = r"\d{1,2}[\s-]+[A-Za-z]+[\s-]+\d{2,4}" 
+
+        # uses regex pattern and creates an arr of matched regex objects
+        # e.g.  [<re.Match object; span=(0, 33), match='25 October 2026 0700LT  to 1800LT'>,...]
+        date = r"\d{1,2}[\s-]+[A-Za-z]+[\s-]+\d+"
         row_pattern = re.compile(
             rf"\b(?P<date>{date}(?:\s+to\s+{date})?)\s+"
             r"(?P<time>\d{4}LT\s+to\s+\d{4}LT)"
         )
+        row_matches = list(row_pattern.finditer(table))
 
+        # check all activities correctly extracted (check num of activities extracted)
+        check_all_found(table, row_matches)
+        
         rows = []
 
         # rows = [{'activityDate': '24 May 2026', 'activityTime': '0000LT to 2359LT', 'activityDateTime': '2026-05-24T00:00:00+08:00'}, ...]
@@ -137,42 +146,94 @@ def extract_activities_from_pdf(text):
         raise ValueError("Something went wrong in extracting activity date and time.")
 
 
-def convert_to_dtobj(activity_date, activity_time):
-    SGT = timezone(timedelta(hours=8)) 
+
+# def convert_to_dtobj(activity_date, activity_time):
+#     SGT = timezone(timedelta(hours=8)) 
 
   
-    DATE_PATTERN = re.compile(r"(\d{1,2})[\s-]+([A-Za-z]{3})[A-Za-z]*[\s-]+(\d{4}|\d{2})")
+#     DATE_PATTERN = re.compile(r"(\d{1,2})[\s-]+([A-Za-z]{3})[A-Za-z]*[\s-]+(\d{4}|\d{2})")
+#     TIME_PATTERN = re.compile(r"(\d{2})(\d{2})\s*LT", re.IGNORECASE)
+
+#     date_match = DATE_PATTERN.search(activity_date)
+#     time_match = TIME_PATTERN.search(activity_time)
+
+#     if not date_match or not time_match:
+#         raise ValueError("Unable to convert activity date and time into Datetime object.")
+
+#     day, month, year = date_match.groups()
+#     year_format = "%Y" if len(year) == 4 else "%y"
+#     date = datetime.strptime(f"{day} {month} {year}", f"%d %b {year_format}")
+
+#     hour, minute = int(time_match[1]), int(time_match[2])
+#     return date.replace(hour=hour, minute=minute, tzinfo=SGT)  
+
+
+def convert_to_dtobj(activity_date, activity_time):
+    ''''''
+    DATE_PATTERN = re.compile(r"\b(\d{1,2})[\s-]+([A-Za-z]+)[\s-]+(\d+)\b")
     TIME_PATTERN = re.compile(r"(\d{2})(\d{2})\s*LT", re.IGNORECASE)
 
     date_match = DATE_PATTERN.search(activity_date)
     time_match = TIME_PATTERN.search(activity_time)
+    
+    SGT = timezone(timedelta(hours=8))
+
+    MONTHS = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7, "aug": 8,
+          "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+          "january": 1, "february": 2, "march": 3, "april": 4, "june": 6, "july": 7, "august": 8,
+          "september": 9, "october": 10, "november": 11, "december": 12}
 
     if not date_match or not time_match:
-        raise ValueError("Unable to convert activity date and time into Datetime object.")
+        raise ValueError(f"Unrecognised activity date/time: '{activity_date}', '{activity_time}'")
+    # 25, October, 2026
+    day, month_name, year = date_match.groups()
 
-    day, month, year = date_match.groups()
-    year_format = "%Y" if len(year) == 4 else "%y"
-    date = datetime.strptime(f"{day} {month} {year}", f"%d %b {year_format}")
+    month = MONTHS.get(month_name.lower())
+    if month is None:
+        raise ValueError(f"Unrecognised month in '{activity_date}'")
 
-    hour, minute = int(time_match[1]), int(time_match[2])
-    return date.replace(hour=hour, minute=minute, tzinfo=SGT)  
+    if len(year) == 4:
+        year = int(year)
+    # elif len(year) == 2:
+    #     year = 2000 + int(year)
+    else:
+        raise ValueError(f"Year incorrectly formatted '{activity_date}'")
+
+    # datetime() itself raises ValueError for impossible dates/times
+    return datetime(year, month, int(day), int(time_match[1]), int(time_match[2]), tzinfo=SGT)
 
 
-# print(extract_uas_data("""
-# Application No. : CAAS/AP1/2026/1760
-# Permit No. : AP1/20260519/0001/UOP/0011
-# Date : 18 May 2026
-# Avetics Global Pte Ltd
-# 47 Ayer Rajah Crescent, #07-08
-# Singapore 139947
-# ATTN: Mr Steven Leong
- 
-# Activity Date Activity Time Operating Altitude
-# 24 May 2026 0000LT to 2359LT
-# 1200 ft above mean sea level (AMSL)
-# 27 May 2026 0000LT to 2359LT
-# 30 May 2026 to 31 May 2026 0000LT to 2359LT
-# 01 June 2026 0000LT to 2359LT
-# 012345.67N 1035634.89E
-#  """))
 
+
+def check_all_found(table, row_matches):
+    '''finds every time range in table that looks like one (representing the num of activity records that SHOULD exist),
+     if count of extracted activities != extracted num of time ranges, throw error.
+      serve '''
+
+    TIME_RANGE = re.compile(r"\d+\s*LT\s*to\s*\d+\s*LT", re.IGNORECASE)
+
+    found_ends = {m.end("time") for m in row_matches}
+    missed = [m for m in TIME_RANGE.finditer(table) if m.end() not in found_ends]
+    if missed:
+        snippets = ["'" + " ".join(table[max(0, m.start() - 35):m.end()].split()) + "'" for m in missed]
+        raise ValueError(f"Could not read {len(missed)} activity row(s): " + "; ".join(snippets))
+
+
+
+str = """Application No. : CAAS/AP1/2026/3824
+Permit No. : AP1/20261012/0005/UOP/0673
+Activity Date Activity Time Operating Altitude
+25 October 2026 0700LT
+ to 1800LT
+1000 ft above mean sea level
+31 October 2026 0700LT
+ to 1800LT
+01 November 2026 0700LT
+ to 1800LT
+07 November 2026  to 09 November
+2026
+0700LT
+ to 1800LT
+012345.44N 1034321.23E"""
+
+extract_uas_data(str)

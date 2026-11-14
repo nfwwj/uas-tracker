@@ -40,5 +40,25 @@ model Activity {
   takenBy           String?    // set when NOTAM taken
 
   @@unique([permitId, activityDate, activityTime])
-  @@index([status, activityDateTime]) // index for what? and why?
+  @@index([status, activityDateTime])
+}
+
+model User {
+   id    Int  @id @default(autoincrement())
+   username String @unique
+   email String @unique
+   passwordHash String
+   session Session?
+   disabled Boolean @default(false)
+   createdAt    DateTime @default(now())
+}
+
+model Session {
+  userId Int @id // 0 or 1:1 rs
+  user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sid String @unique
+  refreshTokenHash String?
+  createdAt        DateTime @default(now())
+  expiresAt DateTime
+
 }

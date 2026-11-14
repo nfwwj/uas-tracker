@@ -3,19 +3,9 @@ import type { createPermitandActivities, ParsedPermit, Permit } from "../types/p
 import axios from "axios"
 
 
-export async function getPermits() {
-    // displayPermits
-    // try and catch block here?
-    try{
-        const response = await server.get<Permit[]>(`/permits`)
-        return response.data
-    }
-    catch (error) {
-        if (error instanceof axios.AxiosError) {
-            throw new Error(error.message)
-        }
-        throw error
-    }   
+export async function getPermits() {  
+    const response = await server.get<Permit[]>(`/permits`)
+    return response.data 
 }
 
 export async function getTotalNumPermits() {

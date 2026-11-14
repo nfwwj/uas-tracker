@@ -299,7 +299,7 @@ function ShowNotamActivities({permitId, mref}: {permitId: number, mref: string |
       <PopoverContent className="w-fit">
         <PopoverHeader>
           <PopoverTitle>{mref}</PopoverTitle>
-          <PopoverDescription>Activities covered by this NOTAM.</PopoverDescription>
+          <PopoverDescription>Activities covered by this NOTAM:</PopoverDescription>
         </PopoverHeader>
         
          <Table> 
