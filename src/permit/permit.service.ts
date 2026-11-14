@@ -109,24 +109,31 @@ export class PermitService {
   }
 
   async getTotalNumPermits(){
+    const upcoming = { status: "N", activityDateTime: { gte: new Date() } }
+
     const permits = await this.prismaService.permit.findMany({
-      where:{activities:{some:{status:"N"}}},   
+      where:{activities:{some:upcoming}},   
     })
     return permits.length
   }
 
   async getPendingPermits(){
+    // permits that alrdy have all activities expired will not be displayed
+
+    // const today = new Date(new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10) + 'T00:00:00+08:00')
+    const upcoming = { status: "N", activityDateTime: { gte: new Date() } }
+
     const permits = await this.prismaService.permit.findMany({
-      where:{activities:{some:{status:"N"}}},
+      where:{activities:{some:upcoming}}, //permits where 1. some activities not taken yet 2. those activities arent expired
       select:{id: true,
         permitNo: true,
         applicationNum: true,
         altitudeFt: true,
         coordinates: true,
         class: true,
-        _count : {select: {activities: {where: {status: "N"}}}},
+        _count : {select: {activities: {where: {status: "N"}}}}, // still get total count
         activities: {
-          where: {status:"N"},
+          where: upcoming, //as mentioned
           orderBy: {activityDateTime: "asc"},
           select: {activityDateTime: true},
           take: 1

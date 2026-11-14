@@ -17,8 +17,36 @@ import { PlusIcon, Plane  } from 'lucide-react'
 
 import ShowPreviousMrefs from "./components/previousNotams"
 
+import { useAuthStore } from './store/authStore'
+import { Spinner } from './components/ui/spinner'
+import { UserBadge } from './components/userBadge'
+import {getMe} from "./api/authAPI"
+import {LoginPage} from './components/loginPage'
+
 export default function App() {
+  const user = useAuthStore((state) => state.user)
+  const checked = useAuthStore((state) => state.checked)
   const [selectedPermit, setSelectedPermit] = useState<Permit | null>(null)
+  
+  useEffect(() => {
+  getMe()
+    .then((currentUser) => useAuthStore.getState().setUser(currentUser)) 
+    .catch(() => useAuthStore.getState().setUser(null))                    // server unreachable
+}, [])
+
+  if (!checked) return <Spinner />
+
+  if (!user){
+    return(
+      <>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster timeout={3500} />
+        <LoginPage />        
+        </ThemeProvider>
+      </>
+    )
+  }
+   
 
   return(
     <>
@@ -45,6 +73,8 @@ export default function App() {
             <div className="permit-column">
               <DisplayPermits onSelect={setSelectedPermit} selectedId={selectedPermit?.id} />
             </div>
+
+            <UserBadge />
 
             <div className="details-column">
               {selectedPermit && (
