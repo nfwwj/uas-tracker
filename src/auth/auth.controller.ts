@@ -5,13 +5,15 @@ import type { Request, Response } from 'express'
 import { HttpAdapterHost } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
 import { OptionalJwtAuthGuard } from './jwt.strategy.js';
-
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService,
               private readonly adapterHost: HttpAdapterHost){}
   
+  @Throttle({ default: { limit: 3, ttl: 1000 * 60} })
   @Post('login')
   async login(@Body() data: LoginUserDTO,
               @Res({passthrough:true}) res: unknown) {
@@ -20,7 +22,7 @@ export class AuthController {
     this.adapterHost.httpAdapter.setCookie(res, 'accessToken', accessToken, {
       httpOnly: true,     
       secure: true,        
-      sameSite: 'none',   //set to strict when deploying
+      sameSite: 'strict',   //set to strict when deploying
       maxAge: 60 * 60 * 12, 
       path: "/api"
     });
