@@ -106,9 +106,9 @@ export function AddPermitDialog() {
 
   function handleParse(){
     const text = textRef.current?.value.trim() ?? ""
-    // const coord = coord_ref.current?.value.trim() ?? ""
+    const coord = coord_ref.current?.value.trim() ?? ""
 
-    const coord = "012345.43N 1034213.42E"
+    // const coord = "012345.43N 1034213.42E"
     if (!text || !coord){
       toast.add({
       title: "Missing details!",
@@ -121,22 +121,6 @@ export function AddPermitDialog() {
 
     mutation.mutate(data)
     
-
-    // mutation.mutate(
-    //   `Application No. : CAAS/AP1/2026/6969
-    //     Permit No. : AP1/20260519/0001/UOP/6969
-    //     Date : 18 May 2026
-    //     Avetics Global Pte Ltd
-    //     47 Ayer Rajah Crescent, #07-08
-    //     Singapore 139947
-    //     ATTN: Mr Steven Leong
-        
-    //     Activity Date Activity Time Operating Altitude
-    //     24 May 2026 0000LT to 2359LT
-    //     1200ft AMSL
-    //     27 May 2026 0000LT to 2359LT
-    //     012345.67N 1035634.89E`
-    //   )
   }
 
     

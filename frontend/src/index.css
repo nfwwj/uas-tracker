@@ -9,6 +9,10 @@
   @apply animate-in fade-in-2 slide-in-from-left-2 fill-mode-both duration-600;
 }
 
+
+
+
+
 /* rainbow text */
 @keyframes rainbow-slide {
   to { background-position: 200% center; }
@@ -98,7 +102,8 @@
   gap: 0.5rem;
   top: 4.5rem;
   position: sticky;
-  max-width: 24rem;
+  min-width: 22rem;
+  max-width: 22rem;
 }
 
 

@@ -1,0 +1,15 @@
+[project]
+name = "parser"
+version = "0.1.0"
+description = "api server that parses uas permit text and returns object"
+
+authors = [
+    { name = "nfwwj", email = "xxx@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.162.5",
+    "uvicorn>=0.54.0",
+]
+
+
