@@ -48,7 +48,7 @@
 /* app.tsx */
 .permit-column {
   display: flex;
-  max-width: 18rem;
+  flex: 0 0 16rem;      /* fixed 18rem: don't grow, don't shrink */
   flex-direction: column;
   gap: 0.5rem; 
   align-self: flex-start;

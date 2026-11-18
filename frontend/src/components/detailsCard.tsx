@@ -1,6 +1,6 @@
 import { getActivities, findMrefsByPermitId, deleteNotam} from '../api/activityAPI'
 import { type Permit } from '../types/permit'
-
+import { deletePermit } from '../api/permitAPI'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
@@ -49,7 +49,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Spinner } from './ui/spinner'
 
-function DetailsCard({ permit }: { permit: Permit }){
+
+function DetailsCard({ permit, onDelete }: { permit: Permit, onDelete: (permit: Permit | null) => void }){
+
   const activitiesQuery = useQuery({
     queryKey: ["activities", permit.id],
     queryFn: () => getActivities(permit.id),
@@ -65,12 +67,95 @@ function DetailsCard({ permit }: { permit: Permit }){
             <CardDescription>{permit.altitudeFt} ft · Class {permit.class}</CardDescription>
             <CardDescription>{permit.coordinates}</CardDescription>
             <CardDescription>{activitiesQuery.data?.length ?? 0} activities pending</CardDescription>
+            <DeletePermit permit={permit} onDelete={onDelete}></DeletePermit>
             {/* <CardDescription>Permit ID {permit.id ?? "?"} · Created at {permit.createdAt ?? }</CardDescription> */}
           </CardHeader>
         </Card>      
     </>
   )
 }
+
+function DeletePermit({permit, onDelete}: {permit: Permit, onDelete: (permit: Permit | null) => void}){
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation(
+    {
+      mutationFn: deletePermit,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["permits"] })
+        // queryClient.invalidateQueries({ queryKey: ["activities", permit.id] })
+        // queryClient.invalidateQueries({ queryKey: ["mref", permit.id] })
+
+        onDelete(null)
+
+        toast.add({
+        title: "Permit deleted successfully.",
+        description: permit.applicationNum,
+        type: "success"
+      })
+    
+  },
+  onError: (error) => {
+    toast.add({
+      title: "Something went wrong.",
+      description: `Error ${error.response?.data.statusCode ?? "XXX"} (${error.response?.statusText ?? "Server error"}): ${error.response?.data.message ?? "Something went wrong."} `,
+      type: "error"
+    })
+  }
+    }
+  )
+
+  function handleDelete(){
+    mutation.mutate(permit.id)
+  }
+
+  return (
+    <AlertDialog >
+      <AlertDialogTrigger
+        render={<Button variant="destructive" size="icon-lg" className="cursor-pointer justify-self-end"><Trash2Icon /></Button>}
+      />
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+            <Trash2Icon />
+          </AlertDialogMedia>
+          <AlertDialogTitle>Delete Permit {permit.applicationNum}?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This permit, together with its activities and NOTAMs, will be deleted.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+          <AlertDialogAction variant="destructive" onClick={handleDelete} disabled={mutation.isPending}>
+            {mutation.isPending && (<Spinner></Spinner>)}
+            Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // function ShowPreviousMrefs({permitId}: {permitId: number}){
 //     const mrefQuery = useQuery({
 //     queryKey: ["mref", permitId],

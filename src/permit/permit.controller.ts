@@ -42,7 +42,7 @@ export class PermitController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('permitNo/:permitNo') //param or query for this?
+  @Get('permitNo/:permitNo') 
   async findPermitByPermitNo(@Param('permitNo') permitNo: string) {
     return this.permitService.findPermitByPermitNo(permitNo);
   }
@@ -58,6 +58,7 @@ export class PermitController {
   @Delete(':id')
   @HttpCode(204)
   async deletePermit(@Param("id", ParseIntPipe) id:number){
+    await sleep(1500);
     return this.permitService.deletePermit(id);
   }
 

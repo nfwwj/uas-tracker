@@ -8,14 +8,14 @@ async function main(){
     const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) })
 
 
-    const email = "test@gmail.com"
-    const password = "password1"
-    const username = "user1"
+    const email = process.env.email!
+    const password = process.env.password!
+    const user = process.env.user!
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
     await prisma.user.create({
-    data: { email: email, username: username, passwordHash: hashedPassword },
+    data: { email: email, username: user, passwordHash: hashedPassword },
     })
 
 

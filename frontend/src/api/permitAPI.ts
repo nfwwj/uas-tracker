@@ -28,3 +28,8 @@ export async function addPermitandActivities(data: createPermitandActivities) {
     console.log(response)
     return response.data
 }
+
+export async function deletePermit(permitId: number){
+    const response = await server.delete(`/permits/${permitId}`)
+    return response.data
+}

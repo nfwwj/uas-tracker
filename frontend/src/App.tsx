@@ -78,7 +78,7 @@ export default function App() {
 
             <div className="details-column">
               {selectedPermit && (
-                <DetailsCard key={selectedPermit.id} permit={selectedPermit} />
+                <DetailsCard key={selectedPermit.id} permit={selectedPermit}  onDelete={setSelectedPermit}/>
 
               )
               }
