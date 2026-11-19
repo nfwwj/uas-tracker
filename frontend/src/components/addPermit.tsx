@@ -55,6 +55,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { PlusIcon } from "lucide-react"
 
 export function AddPermitDialog() {
   const [parsedPermit, setparsedPermit] = useState<ParsedPermit | null>(null)
@@ -128,7 +129,7 @@ export function AddPermitDialog() {
     <>
 
     <AlertDialog open={open} onOpenChange={(isOpen) => { setOpen(isOpen); if (!isOpen) setparsedPermit(null) }}>
-      <AlertDialogTrigger render={<Button variant="ghost">Add permit</Button>} />
+      <AlertDialogTrigger render={<Button><PlusIcon />Add permit</Button>} />
 
       <AlertDialogContent>
         <AlertDialogHeader>

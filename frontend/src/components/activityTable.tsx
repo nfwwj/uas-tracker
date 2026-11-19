@@ -71,9 +71,11 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
     {/* wrapper keeps the title above the table; .activity-table lays its children out in a row */}
     <div className="flex flex-col gap-2">
     <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "150ms" }}>Activities</p>
-    <Table className="animate-enter" style={{ animationDelay: "150ms" }}>
+    {/* card fill + border, like the Card components */}
+    <div className="animate-enter overflow-hidden rounded-xl border bg-card" style={{ animationDelay: "150ms" }}>
+    <Table>
       <TableHeader>
-        <TableRow className="cursor-default select-none hover:bg-black">
+        <TableRow className="cursor-default select-none hover:bg-transparent">
           <TableHead className="w-10 text-xl text-left"></TableHead>
           
           <TableHead>Activity Date</TableHead>
@@ -105,7 +107,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
                 checked={selected}/>
               </TableCell>
               
-              <TableCell className={cn("text-lg", expired && "text-destructive")}>{activity.activityDate}</TableCell>
+              <TableCell className={cn("text-lg", expired && ("text-destructive"))}>{activity.activityDate}</TableCell>
               <TableCell className={cn("text-lg", expired && "text-destructive")}>{activity.activityTime}</TableCell>
               {/* <TableCell className="text-lg">{activity.id}</TableCell> */}
           </TableRow>
@@ -115,6 +117,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
         
       </TableBody>
     </Table>
+    </div>
     </div>
     {activitiesQuery.data.length > 0 && (<NotamInput selected={selectedIds} permitId={permitId} onTaken={() =>setSelectedIds([])} dataLength={activitiesQuery.data.length}></NotamInput>)}
     

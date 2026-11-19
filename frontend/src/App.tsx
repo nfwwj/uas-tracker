@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState , Fragment} from 'react'
 import DisplayPermits from './components/displayPermits'
 import DetailsCard from './components/detailsCard'
 
@@ -56,9 +56,7 @@ export default function App() {
           <Plane className='h-5 w-5' />
           <span className="text-lg font-semibold">AirTrack</span>
         </div>
-        
-   
-    
+       
     <nav className="flex gap-2">
       {/* <Button variant="ghost">Add permit</Button> */}
      <PermitSearch onSelect={setSelectedPermit} />
@@ -78,8 +76,10 @@ export default function App() {
 
             <div className="details-column">
               {selectedPermit && (
-                <DetailsCard key={selectedPermit.id} permit={selectedPermit}  onDelete={setSelectedPermit}/>
-
+                 <Fragment key={selectedPermit.id}>
+                <DetailsCard permit={selectedPermit}  onDelete={setSelectedPermit}/>
+                <ShowPreviousMrefs  permitId={selectedPermit.id} />
+                </Fragment>
               )
               }
             </div>
@@ -88,9 +88,9 @@ export default function App() {
               
             </div>
 
-            <div className='previousnotams-column'>
+            {/* <div className='previousnotams-column'>
               {selectedPermit && ( <ShowPreviousMrefs key= {selectedPermit.id } permitId={selectedPermit.id} />)}
-            </div>
+            </div> */}
         </ThemeProvider>
     </main>
 

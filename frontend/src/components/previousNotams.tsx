@@ -86,8 +86,8 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
   if (mrefQuery.data.length == 0){
     return (
     <>
-    <p className="text-2xl font-bold animate-enter"  style={{ animationDelay: "250ms" }} >Previous NOTAMs</p>
-    <Card className="animate-enter" style={{ animationDelay: "250ms" }}>
+    {/* <p className="text-2xl font-bold animate-enter"  style={{ animationDelay: "250ms" }} >Previous NOTAMs</p> */}
+    <Card className="animate-enter">
             <CardHeader>
               <CardTitle>Previous NOTAMs taken</CardTitle>
               <CardDescription>No previous NOTAMs taken.</CardDescription>
@@ -98,8 +98,8 @@ function ShowPreviousMrefs({permitId}: {permitId: number}){
   } 
  return (
     <>
-    <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "250ms" }}>Previous NOTAMs</p>
-  <Card className="animate-enter" style={{ animationDelay: "250ms" }}>
+    {/* <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "250ms" }}>Previous NOTAMs</p> */}
+  <Card className="animate-enter">
           <CardHeader>
             <CardTitle>Previous NOTAMs taken</CardTitle>
             <CardDescription>Not arranged in order.</CardDescription>

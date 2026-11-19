@@ -18,6 +18,7 @@ import {
   ItemContent,
   ItemDescription,
   ItemTitle,
+  ItemMedia
 } from "@/components/ui/item"
 import { cn } from "cn"
 import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react"
@@ -63,8 +64,7 @@ function DisplayPermits({ onSelect, selectedId }: {onSelect: (permit: Permit) =>
 
 
        <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Dislaying {permits.length} of {total} permits</p>
-      <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Arranged by soonest starting activity. Excludes expired activities.</p>
-       <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Refreshed on every new submission.</p>
+      <p className='text-sm text-muted-foreground animate-enter' style={{animationDelay:`${permits.length * 400}ms` }}>Arranged by soonest starting activity.</p>
      
   </>
   )
@@ -72,8 +72,12 @@ function DisplayPermits({ onSelect, selectedId }: {onSelect: (permit: Permit) =>
 
 
 function PermitCard({ permit, onSelect, selected }: { permit: Permit, onSelect: (permit: Permit) => void , selected: boolean | null}){
-  const nextActivity = new Date(permit.activities[0].activityDateTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Singapore' })
 
+  const date = new Date(permit.activities[0].activityDateTime)
+  const day = date.toLocaleDateString('en-GB', { day: '2-digit', timeZone: 'Asia/Singapore' })        // "19"
+  const month = date.toLocaleDateString('en-GB', { month: 'short', timeZone: 'Asia/Singapore' })      // "Nov"
+
+  
   return(
     <Item
       variant="outline"
@@ -83,21 +87,15 @@ function PermitCard({ permit, onSelect, selected }: { permit: Permit, onSelect: 
       className={cn(
         'cursor-pointer hover:bg-muted',
         selected && ("bg-white text-black hover:bg-white")
-      )}
-      
- 
-      
+      )}    
     >
+      <ItemMedia className="w-10 flex-col gap-0">
+            <span className="text-xl font-bold leading-none">{day}</span>
+            <span className="text-sm font-semibold uppercase">{month}</span>
+      </ItemMedia>
       <ItemContent>
-        <ItemTitle>{permit.applicationNum}</ItemTitle>
-        <ItemDescription>      
-          Next activity: {nextActivity}
-        </ItemDescription>
-        <span className={cn("rounded-md px-2 py-1 text-xs text-xs w-fit",
-          selected && ("bg-black text-white")
-        )}>
-          {permit._count.activities} pending
-        </span>
+        <ItemTitle className="font-mono">{permit.applicationNum}</ItemTitle>
+        <ItemDescription>{permit._count.activities} pending</ItemDescription>
       </ItemContent>
       <ItemActions>
         

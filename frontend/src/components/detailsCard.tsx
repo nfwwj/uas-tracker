@@ -112,7 +112,7 @@ function DeletePermit({permit, onDelete}: {permit: Permit, onDelete: (permit: Pe
   return (
     <AlertDialog >
       <AlertDialogTrigger
-        render={<Button variant="destructive" size="icon-lg" className="cursor-pointer justify-self-end"><Trash2Icon /></Button>}
+        render={<Button variant="destructive" size="icon-lg" className="cursor-pointer justify-self-end absolute "><Trash2Icon /></Button>}
       />
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
