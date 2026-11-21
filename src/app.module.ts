@@ -20,11 +20,12 @@ import { join } from 'node:path';
         },
       ],
     }),
-  ServeStaticModule.forRoot({ //remove this during aws
-  rootPath: join(__dirname, '..', 'frontend','dist'),
-  exclude: ['/api/{*path}'],
-})
-,],
+//   ServeStaticModule.forRoot({ //remove this during aws
+//   rootPath: join(__dirname, '..', 'frontend','dist'),
+//   exclude: ['/api/{*path}'],
+// })
+// ,
+],
   controllers: [AppController],
   providers: [AppService, {
       provide: APP_GUARD,

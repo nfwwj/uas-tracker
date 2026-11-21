@@ -22,7 +22,7 @@ export class AuthController {
     this.adapterHost.httpAdapter.setCookie(res, 'accessToken', accessToken, {
       httpOnly: true,     
       secure: true,        
-      sameSite: 'none',   //set to strict when deploying
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'none',
       maxAge: 60 * 60 * 12, 
       path: "/api"
     });
