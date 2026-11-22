@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard, seconds } from '@nestjs/throttler';
+import { HealthController } from './health/health.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'node:path';
 
@@ -26,7 +27,7 @@ import { join } from 'node:path';
 // })
 // ,
 ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService, {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
