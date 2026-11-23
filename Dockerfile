@@ -32,6 +32,8 @@ COPY --from=backend /app/dist ./dist
 COPY prisma/ ./prisma
 COPY prisma7.config.ts .
 
+COPY /certs ./certs
+ENV NODE_EXTRA_CA_CERTS=/app/certs/global-bundle.pem
 
 # uv installs Python and the parser's dependencies
 COPY --from=ghcr.io/astral-sh/uv:0.13.8 /uv /uvx /bin/
