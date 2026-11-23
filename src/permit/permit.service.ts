@@ -1,5 +1,5 @@
 // src/permit/permit.service.ts
-import { BadGatewayException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePermitDTO } from './dto/permit-dto';
@@ -13,21 +13,30 @@ export class PermitService {
   constructor (private prismaService: PrismaService){}
 
   async parseText(data: ParsePermitDTO) {
-    const res = await fetch(process.env.PYTHON_SERVER_URL ?? 'http://localhost:8000/parse', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok){
-        throw new BadGatewayException();
+    let res: Response
+    try {
+        res = await fetch(process.env.PYTHON_SERVER_URL ?? 'http://localhost:8000/parse', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+    } catch {
+      throw new BadGatewayException('Python server unreachable.')
     }
-    const parsedData = await res.json();
 
-    return parsedData;
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      if (res.status === 422) {
+        throw new BadRequestException(body?.detail ?? 'Bad request.')
+      }
+      throw new BadGatewayException(body?.detail ?? 'Parser failed.')
+    }
+
+    return res.json()
   }
 
-  async addPermitandActivities({ activities, ...permitData }: CreatePermitDTO) { 
+
+  async addPermitandActivities({ activities, ...permitData }: CreatePermitDTO) { //spread operator?
     try {
       return await this.prismaService.$transaction(async (tx) => {
         const permit = await tx.permit.create({data: permitData}); 
@@ -58,6 +67,24 @@ export class PermitService {
     return permit;
   }
 
+  async search(applicationNumber:string){
+    if (!applicationNumber?.trim()){
+      return []
+    } 
+
+    return this.prismaService.permit.findMany({
+    where: {
+      OR: [
+        {applicationNum: { endsWith: applicationNumber, mode: 'insensitive' }},
+        {applicationNum: { contains: applicationNumber, mode: "insensitive"}}
+      ]
+      
+    },
+    take: 5,
+  })
+}
+  
+
   async findPermitByPermitNo(permitNo: string) {
     const permit = await this.prismaService.permit.findUnique({
       where: {permitNo: permitNo}
@@ -81,24 +108,46 @@ export class PermitService {
     })
   }
 
-  async getPendingPermits(){
+  async getTotalNumPermits(){
+    const upcoming = { status: "N", activityDateTime: { gte: new Date() } }
+
     const permits = await this.prismaService.permit.findMany({
-      where:{activities:{some:{status:"N"}}},
+      where:{activities:{some:upcoming}},   
+    })
+    return permits.length
+  }
+
+  async getPendingPermits(){
+    // permits that alrdy have all activities expired will not be displayed
+
+    // const today = new Date(new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10) + 'T00:00:00+08:00')
+    const upcoming = { status: "N", activityDateTime: { gte: new Date() } }
+
+    const permits = await this.prismaService.permit.findMany({
+      where:{activities:{some:upcoming}}, //permits where 1. some activities not taken yet 2. those activities arent expired
       select:{id: true,
         permitNo: true,
         applicationNum: true,
-        _count : {select: {activities: {where: {status: "N"}}}},
+        altitudeFt: true,
+        coordinates: true,
+        class: true,
+        _count : {select: {activities: {where: {status: "N"}}}}, // still get total count
         activities: {
-          where: {status:"N"},
+          where: upcoming, //as mentioned
           orderBy: {activityDateTime: "asc"},
           select: {activityDateTime: true},
           take: 1
-        }
-      }
-    })
+        }  
+    }
+  }
+  )
 
     return permits.sort((a,b) => a.activities[0].activityDateTime.getTime() - b.activities[0].activityDateTime.getTime() ||
-      a.id - b.id)
+      a.id - b.id).slice(0, 5)
+  }
+
+  async deleteAllPermits(){
+    return this.prismaService.permit.deleteMany()
   }
 
 

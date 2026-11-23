@@ -1,49 +1,100 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState , Fragment} from 'react'
 import DisplayPermits from './components/displayPermits'
-import ActivityCard from './components/activityCard'
+import DetailsCard from './components/detailsCard'
+
 import { type Permit } from './types/permit'
 
+import ShowActivityTable from './components/activityTable'
+import { Toaster } from "@/components/ui/toast"
+import { Button } from "@/components/ui/button"
+
+import { ThemeProvider } from "@/components/theme-provider"
+import { AddPermitDialog } from './components/addPermit'
+
+import { PermitSearch} from './components/searchBar'
+
+import { PlusIcon, Plane  } from 'lucide-react'
+
+import ShowPreviousMrefs from "./components/previousNotams"
+
+import { useAuthStore } from './store/authStore'
+import { Spinner } from './components/ui/spinner'
+import { UserBadge } from './components/userBadge'
+import {getMe} from "./api/authAPI"
+import {LoginPage} from './components/loginPage'
+
 export default function App() {
-  const [refreshKey, setrefreshKey] = useState<number>(0)
+  const user = useAuthStore((state) => state.user)
+  const checked = useAuthStore((state) => state.checked)
   const [selectedPermit, setSelectedPermit] = useState<Permit | null>(null)
+  
+  useEffect(() => {
+  getMe()
+    .then((currentUser) => useAuthStore.getState().setUser(currentUser)) 
+    .catch(() => useAuthStore.getState().setUser(null))                    // server unreachable
+}, [])
+
+  if (!checked) return <Spinner />
+
+  if (!user){
+    return(
+      <>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster timeout={3500} />
+        <LoginPage />        
+        </ThemeProvider>
+      </>
+    )
+  }
+   
 
   return(
     <>
-    <div className="main-layout">
-        <div className="permit-column">
-          <DisplayPermits refreshKey={refreshKey} onSelect={setSelectedPermit} />
+    <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3"> 
+
+        <div className='flex items-center cursor-pointer'>
+          <Plane className='h-5 w-5' />
+          <span className="text-lg font-semibold">AirTrack</span>
         </div>
-        <div className="activity-column">
-          {selectedPermit ? (
-            <ActivityCard permit={selectedPermit} />
-          ) : (
-            <p>Select a permit to see its activities.</p>
-          )}
-        </div>
-      </div>
+       
+    <nav className="flex gap-2">
+      {/* <Button variant="ghost">Add permit</Button> */}
+     <PermitSearch onSelect={setSelectedPermit} />
+     <AddPermitDialog />
+
+    </nav>
+  </header>
+    <main className="main-layout">
+       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster timeout={3500} />
+        
+            <div className="permit-column">
+              <DisplayPermits onSelect={setSelectedPermit} selectedId={selectedPermit?.id} />
+            </div>
+
+            <UserBadge />
+
+            <div className="details-column">
+              {selectedPermit && (
+                 <Fragment key={selectedPermit.id}>
+                <DetailsCard permit={selectedPermit}  onDelete={setSelectedPermit}/>
+                <ShowPreviousMrefs  permitId={selectedPermit.id} />
+                </Fragment>
+              )
+              }
+            </div>
+            <div className='activity-table'>
+              {selectedPermit && (<ShowActivityTable key= {selectedPermit.id } permitId={selectedPermit.id}></ShowActivityTable>)}
+              
+            </div>
+
+            {/* <div className='previousnotams-column'>
+              {selectedPermit && ( <ShowPreviousMrefs key= {selectedPermit.id } permitId={selectedPermit.id} />)}
+            </div> */}
+        </ThemeProvider>
+    </main>
 
     </>
   )
 }
 
-
-
-
-
-
-
-
-export function App2(){
-  const [refreshKey, setrefreshKey] = useState<number>(0)
-  const triggerRefresh = () => (setrefreshKey(prev => prev + 1))
-  const [permit, setPermit] = useState<null | Permit>(null)
-  return(
-    <>
-    <DisplayPermits refreshKey={refreshKey}  />
-
-    
-    
-    </>
-  )
-
-}

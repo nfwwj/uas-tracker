@@ -1,22 +1,30 @@
 import server from "./server"
-import type { Activity, cancelNotam, takeNotam } from "../types/activity"
+import type { Activity, cancelNotam, editNotam, takeNotam } from "../types/activity"
 
-export async function getActivitiesByPermitId(permitId: number) {
-    const response = await server.get<Activity[]>(`/activities/id/${permitId}`)
+export async function getActivities(permitId: number, mref?: string) {
+    // detailsCard + activityTable (pending); mref dialog (with mref). axios drops mref when undefined
+    const response = await server.get<Activity[]>(`/activities`, { params: { permitId, mref } })
     return response.data
 }
 
 export async function findMrefsByPermitId(permitId: number) {
-    const response = await server.get<{ mref: string }[]>(`/activities/mrefs/${permitId}`)
-    return response.data.map((row) => row.mref)
+    // activityTable
+    const response = await server.get<{ mref: string, takenBy: string }[]>(`/activities/mrefs`, { params: { permitId } })
+    return response.data
 }
 
 export async function takeNotam(data: takeNotam) {
-    const response = await server.patch(`/activities/takenotam`, data)
+    // activityTable mutation
+    const response = await server.patch(`/activities/take-notam`, data)
     return response.data
 }
 
 export async function deleteNotam(data: cancelNotam) {
-    const response = await server.patch(`/activities/cancelnotam`, data)
+    const response = await server.patch(`/activities/cancel-notam`, data)
     return response.data
+}
+
+export async function editNotam(data: editNotam){
+    const response = await server.patch(`/activities/edit-notam`,data)
+    return response.data //?
 }

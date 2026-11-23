@@ -1,34 +1,58 @@
 // src/activity/activity.service.ts
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CancelNotamDTO, TakeNotamDTO } from './dto/activity.dto';
+import { CancelNotamDTO, EditNotamDTO, TakeNotamDTO } from './dto/activity.dto';
+import { timeStamp } from 'node:console';
 
 @Injectable()
 export class ActivityService {
   constructor(private prismaService: PrismaService) {}
 
-  async getActivitiesByPermitId(permitId: number) { 
+  async getAllActivities(){
+    return this.prismaService.activity.findMany()
+  }
+
+  async getActivities(permitId: number, mref?: string) {
     return this.prismaService.activity.findMany({
-      where: {permitId: permitId, status: "N"},
-      orderBy: [{activityDateTime:"asc"}, {id:"asc"}] // nee
+      where: mref ? {permitId, mref} : {permitId, status: "N"},
+      orderBy: [{activityDateTime:"asc"}, {id:"asc"}]
     });
   }
 
   async takeNotam(data: TakeNotamDTO) {
+    const mrefExists = await this.prismaService.activity.findFirst({where: {mref: data.mref}})
+    if (mrefExists){
+      throw new ConflictException("Mref already exists!")
+    }
     await this.prismaService.activity.updateMany({
       where:{id: {in:data.ids}, status: "N"},
       data:{status: "Y", mref: data.mref, takenBy: data.takenBy}
     })
   }
  
-
-  async findMrefsByPermitId(permitId: number) {
-    const permit = await this.prismaService.activity.findMany({
+  async getMrefsByPermitId(permitId: number) {
+    return this.prismaService.activity.findMany({
       where: {permitId : permitId, mref: { not: null } },
       distinct: ['mref'],
-      select: { mref: true }
+      select: { mref: true, takenBy: true }
     });
-    return permit
+  }
+
+  async editNotam(data: EditNotamDTO){
+    if (data.newMref === data.oldMref) {
+      throw new BadRequestException("New mref is the same as the old one.")
+    }
+
+    const mrefExists = await this.prismaService.activity.findFirst({where: {mref: data.newMref}})
+    if (mrefExists){
+      throw new ConflictException("Mref already exists!")
+    }
+
+    await this.prismaService.activity.updateMany({
+      where: {permitId: data.permitId, mref: data.oldMref},
+      data: {mref: data.newMref}
+    })
+
   }
 
   // 4b. cancel NOTAM: every activity under this mref goes back to N
@@ -39,11 +63,9 @@ export class ActivityService {
     if (!notamExists) {
       throw new NotFoundException('NOTAM not found!');
     }
-    const notam = await this.prismaService.activity.updateMany({
+    await this.prismaService.activity.updateMany({
       where: { mref: data.mref },
       data: { status: 'N', mref: null, takenBy: null },
     });
-   
-    return notam
   }
 }
