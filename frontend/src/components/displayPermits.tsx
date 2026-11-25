@@ -54,8 +54,6 @@ function DisplayPermits({ onSelect, selectedId }: {onSelect: (permit: Permit) =>
 
   return(
    <>
-
-   <p className="text-2xl font-bold animate-enter">Permits</p>
       {permits.map((permit, i)=>(
         <div key={permit.id} className="animate-enter" style={{ animationDelay: `${i * 400}ms` }}>
           <PermitCard permit={permit} onSelect={onSelect} selected={permit.id === selectedId}/>

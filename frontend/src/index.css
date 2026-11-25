@@ -40,7 +40,14 @@
 .main-layout {
   display: flex;
   gap: 0.5rem;
-  margin: 2rem;
+  margin-left: 2rem
+}
+
+.stats-column{
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin: 2rem 2rem 1rem;
 }
 
 /* app.tsx */

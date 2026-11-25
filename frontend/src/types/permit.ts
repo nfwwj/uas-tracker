@@ -30,3 +30,8 @@ export interface createPermitandActivities extends ParsedPermit {
   fullText?: string
 }
 
+export interface MonthSummary {
+    month: string
+    year: number
+    data: { total: number, completed: number, pending: number, permits: number, expired: number, notams: number }[]
+}
