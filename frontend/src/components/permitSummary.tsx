@@ -7,13 +7,6 @@ import { Progress } from "@/components/ui/progress"
 import { useQuery } from "@tanstack/react-query"
 import { getMonthSummary } from "../api/permitAPI"
 
-// Placeholder values: swap for GET /stats/activities later
-const months = [
-  { month: "November 2026", note: "This month", days: "6 days to go",     permits: 5, activities: 16, coveredPct: 38 },
-  { month: "December 2026", note: "Next month", days: "Starts in 6 days", permits: 2, activities: 9,  coveredPct: 11 },
-]
-const notamsTaken = 12
-
 export function StatsStrip() {
     const { data, isPending } = useQuery({
     queryKey: ["permits", "summary"],
