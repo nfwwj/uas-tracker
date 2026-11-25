@@ -59,7 +59,6 @@ function DetailsCard({ permit, onDelete }: { permit: Permit, onDelete: (permit: 
 
   return(
     <>
-    <p className="text-2xl font-bold animate-enter">Details</p>
         <Card className="animate-enter">
           <CardHeader>
             <p className="text-xs font-medium text-muted-foreground animate-pulse">CURRENTLY DISPLAYING</p>

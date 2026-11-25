@@ -150,7 +150,46 @@ export class PermitService {
     return this.prismaService.permit.deleteMany()
   }
 
+  async getMonthSummary() {
+    const now = new Date()
+
+    const currentMonth = now.getUTCMonth() + 1
+    const currentYear = now.getUTCFullYear()
+    
+    const nextMonth = currentMonth == 12 ? 1 : now.getUTCMonth() + 2
+    const nextYear = currentMonth == 12 ? currentYear + 1 : currentYear
+    
+    const data = {
+      current: await this.getData(currentYear, currentMonth),
+      next: await this.getData(nextYear, nextMonth),
+    }  
+
+    return data
+  
+  }
+
+   async getData(Y: number, M: number){
+     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December']
+
+       const currentData = await this.prismaService.$queryRaw`
+       SELECT count(*)::int                             AS total,
+           count(*) FILTER (WHERE status = 'Y')::int AS completed,
+           count(*) FILTER (WHERE status = 'N')::int AS pending,
+           count(DISTINCT "permitId")::int           AS permits,
+            count(*) FILTER (WHERE status = 'N' AND "activityDateTime" < now())::int AS expired,
+            count(DISTINCT mref)::int  AS notams
+        FROM "Activity"
+        WHERE EXTRACT(YEAR  FROM "activityDateTime") = ${Y}
+          AND EXTRACT(MONTH FROM "activityDateTime") = ${M};`
+      
+      return {month: MONTH_NAMES[M - 1], year: Y, data: currentData}
+
+    }
+    
+
 
 
 
 }
+

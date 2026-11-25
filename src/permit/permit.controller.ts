@@ -22,6 +22,12 @@ export class PermitController {
   async getPendingPermits(){
     return this.permitService.getPendingPermits()
   }
+  
+  // @UseGuards(JwtAuthGuard)
+  @Get('summary') 
+  async getMonthSummary() {
+    return this.permitService.getMonthSummary();
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('search')  
@@ -68,5 +74,4 @@ export class PermitController {
   //   return this.permitService.deleteAllPermits()
   // }
 
-  
 }

@@ -23,6 +23,8 @@ import { UserBadge } from './components/userBadge'
 import {getMe} from "./api/authAPI"
 import {LoginPage} from './components/loginPage'
 
+import { StatsStrip } from './components/permitSummary'
+
 export default function App() {
   const user = useAuthStore((state) => state.user)
   const checked = useAuthStore((state) => state.checked)
@@ -64,10 +66,16 @@ export default function App() {
 
     </nav>
   </header>
+   <div className='stats-column'>
+        <StatsStrip></StatsStrip>
+    </div>
     <main className="main-layout">
        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Toaster timeout={3500} />
-        
+
+           
+            
+
             <div className="permit-column">
               <DisplayPermits onSelect={setSelectedPermit} selectedId={selectedPermit?.id} />
             </div>

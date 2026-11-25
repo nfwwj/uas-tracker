@@ -68,10 +68,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
 
   return (
     <>
-    {/* wrapper keeps the title above the table; .activity-table lays its children out in a row */}
     <div className="flex flex-col gap-2">
-    <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "150ms" }}>Activities</p>
-    {/* card fill + border, like the Card components */}
     <div className="animate-enter overflow-hidden rounded-xl border bg-card" style={{ animationDelay: "150ms" }}>
     <Table>
       <TableHeader>
@@ -185,9 +182,7 @@ export function NotamInput({selected, permitId, onTaken, dataLength}: {selected:
   }
 
   return(
-    // sticky on the wrapper, not inside the Card: it slides within .activity-table (as tall as the table)
     <div className="notam-column">
-     <p className="text-2xl font-bold animate-enter" style={{ animationDelay: "225ms" }}>Take NOTAM</p>
      <Card className="animate-enter" style={{ animationDelay: "225ms" }}>
          <CardContent className="notam-form">
              <Field>

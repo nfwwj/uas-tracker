@@ -1,5 +1,5 @@
 import server from "./server"
-import type { createPermitandActivities, ParsedPermit, Permit } from "../types/permit"
+import type { createPermitandActivities, ParsedPermit, Permit, MonthSummary} from "../types/permit"
 import axios from "axios"
 
 
@@ -31,5 +31,10 @@ export async function addPermitandActivities(data: createPermitandActivities) {
 
 export async function deletePermit(permitId: number){
     const response = await server.delete(`/permits/${permitId}`)
+    return response.data
+}
+
+export async function getMonthSummary() {
+    const response = await server.get<{ current: MonthSummary, next: MonthSummary }>(`/permits/summary`)
     return response.data
 }
