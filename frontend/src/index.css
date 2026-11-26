@@ -9,11 +9,6 @@
 @utility animate-enter {
   @apply animate-in fade-in-2 slide-in-from-left-2 fill-mode-both duration-600;
 }
-
-
-
-
-
 /* rainbow text */
 @keyframes rainbow-slide {
   to { background-position: 200% center; }
@@ -32,6 +27,10 @@
     /* font-size: clamp(14px, 100vw / 110, 16px); */
 
   }
+    * {
+    scrollbar-width: auto;
+    scrollbar-color: gray transparent;   /* thumb, track */
+  }
 }
 
 
@@ -47,7 +46,7 @@
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  margin: 2rem 2rem 1rem;
+  margin: 1rem 2rem 2rem 2rem;
 }
 
 /* app.tsx */

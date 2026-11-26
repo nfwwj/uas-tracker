@@ -178,7 +178,8 @@ export class PermitService {
            count(*) FILTER (WHERE status = 'N')::int AS pending,
            count(DISTINCT "permitId")::int           AS permits,
             count(*) FILTER (WHERE status = 'N' AND "activityDateTime" < now())::int AS expired,
-            count(DISTINCT mref)::int  AS notams
+            count(DISTINCT mref)::int  AS notams,
+            count(*) FILTER ( WHERE status = 'N' AND "activityDateTime" >  now() AND "activityDateTime" <= now() + interval '72 hours')::int AS "dueSoon"
         FROM "Activity"
         WHERE EXTRACT(YEAR  FROM "activityDateTime") = ${Y}
           AND EXTRACT(MONTH FROM "activityDateTime") = ${M};`

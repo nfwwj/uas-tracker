@@ -5,7 +5,9 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto rounded-md border"
+      // className="relative w-full overflow-x-auto rounded-md border"
+      // fill, ring and radius copied from Card (card.tsx)
+      className="relative w-full overflow-x-auto rounded-xl bg-card ring-1 ring-foreground/30"
 
     >
       <table

@@ -83,7 +83,7 @@ export function AddPermitDialog() {
     onSuccess: (data) => {queryClient.invalidateQueries({ queryKey: ["permits"] })
     
      toast.add({
-      title: `New permit ${parsedPermit?.permitNo} added!`,
+      title: `New permit ${parsedPermit?.applicationNum} added!`,
       type: "success"
     })
     setparsedPermit(null)

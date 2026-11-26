@@ -22,8 +22,9 @@ export class PermitController {
   async getPendingPermits(){
     return this.permitService.getPendingPermits()
   }
-  
+
   // @UseGuards(JwtAuthGuard)
+   @UseGuards(JwtAuthGuard)
   @Get('summary') 
   async getMonthSummary() {
     return this.permitService.getMonthSummary();

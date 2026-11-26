@@ -68,8 +68,8 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
 
   return (
     <>
-    <div className="flex flex-col gap-2">
-    <div className="animate-enter overflow-hidden rounded-xl border bg-card" style={{ animationDelay: "150ms" }}>
+
+    <div className="animate-enter rounded-xl" style={{ animationDelay: "150ms" }}>
     <Table>
       <TableHeader>
         <TableRow className="cursor-default select-none hover:bg-transparent">
@@ -115,7 +115,7 @@ export default function ShowActivityTable({ permitId }: { permitId: number }){
       </TableBody>
     </Table>
     </div>
-    </div>
+    
     {activitiesQuery.data.length > 0 && (<NotamInput selected={selectedIds} permitId={permitId} onTaken={() =>setSelectedIds([])} dataLength={activitiesQuery.data.length}></NotamInput>)}
     
     </>

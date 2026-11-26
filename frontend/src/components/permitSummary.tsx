@@ -33,7 +33,7 @@ export function StatsStrip() {
   return (
     <>
    
-     <div className="flex flex-[7] gap-2">
+     <div className="flex flex-[6] gap-2">
       {months.map(({ label, summary }) => {
         const data = summary.data[0]
 
@@ -65,7 +65,7 @@ export function StatsStrip() {
       })}
       </div>
 
-      <div className="flex flex-[3]">
+      <div className="flex flex-[2]">
         <Card className="flex-1  max-w-none!">
         <CardHeader>
           <CardTitle className="text-2xl">NOTAMs taken</CardTitle>
@@ -76,6 +76,23 @@ export function StatsStrip() {
         </CardContent>
       </Card>
       </div>
+
+        <div className="flex flex-[2]">
+        <Card className="flex-1  max-w-none!">
+        <CardHeader>
+          <CardTitle className="text-2xl">Starting within 72hrs</CardTitle>
+          <CardDescription>{data.current.month} {data.current.year}</CardDescription>
+        </CardHeader>
+        <CardContent className="px-5">
+          <div className="flex items-baseline gap-2">
+            <span className="text-5xl font-semibold font-mono">{data.current.data[0].dueSoon}</span>
+            <span className="text-muted-foreground">{data.current.data[0].dueSoon === 1 ? "activity requires" : "activities require"} NOTAM</span>
+          </div>
+          
+        </CardContent>
+      </Card>
+      </div>
+
     </>
   )
 }

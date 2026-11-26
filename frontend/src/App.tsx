@@ -5,6 +5,7 @@ import DetailsCard from './components/detailsCard'
 import { type Permit } from './types/permit'
 
 import ShowActivityTable from './components/activityTable'
+
 import { Toaster } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 
@@ -72,9 +73,6 @@ export default function App() {
     <main className="main-layout">
        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Toaster timeout={3500} />
-
-           
-            
 
             <div className="permit-column">
               <DisplayPermits onSelect={setSelectedPermit} selectedId={selectedPermit?.id} />
