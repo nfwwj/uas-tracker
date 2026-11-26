@@ -104,6 +104,9 @@ def extract_activities_from_pdf(text):
         # formatted and split in later steps
         # e.g. 01 November 2026 0700LT  to 1800LT 07 November 2026...
         table = " ".join(lines[start_idx:end_idx])
+        
+        # drop the Operating Altitude column: it wraps into the date cells, e.g. "06 December (AMSL) 2026"
+        table = re.sub(r"\d+\s*ft\s+above\s+mean\s+sea\s+level|\(AMSL\)", " ", table, flags=re.IGNORECASE)
 
         # date = r"\d{1,2}[\s-]+[A-Za-z]+[\s-]+\d{2,4}" 
 
